@@ -16,7 +16,7 @@ class Property extends Model
         'bedrooms',
         'area',
         'description',
-        // 'user_id',
+        'user_id',
     ];
 
     public function address()
