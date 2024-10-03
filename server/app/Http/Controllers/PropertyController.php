@@ -15,10 +15,37 @@ class PropertyController extends Controller
         return PropertyResource::collection(Property::all());
     }
 
+    public function search(Request $request)
+    {
+        $status = $request->query('status');
+        $type = $request->query('type');
+        $location = $request->query('location');
+
+        $query = Property::with('address')->whereHas('address');
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        if ($type) {
+            $query->where('type', $type);
+        }
+
+        if ($location) {
+            $query->whereHas('address', function ($query) use ($location) {
+                $query->where('country', 'LIKE', "%{$location}%")
+                      ->orWhere('city', 'LIKE', "%{$location}%")
+                      ->orWhere('street', 'LIKE', "%{$location}%");
+            });
+        }
+
+        return PropertyResource::collection($query->get());
+    }
+
     public function store(Request $request)
     {
-        // Implement validation rules
         $validated = $request->validate([
+            'status' => 'required|string',
             'type' => 'required|string',
             'price' => 'required|numeric',
             'bathrooms' => 'required|integer',
@@ -28,6 +55,7 @@ class PropertyController extends Controller
         ]);
 
         $property = Property::create([
+            'status' => $validated['status'],
             'type' => $validated['type'],
             'price' => $validated['price'],
             'bathrooms' => $validated['bathrooms'],
@@ -57,6 +85,7 @@ class PropertyController extends Controller
         $property = Property::find($id);
 
         $validated = $request->validate([
+            'status' => 'sometimes|string',
             'type' => 'sometimes|string|max:10',
             'price' => 'sometimes|numeric|min:0|max:99999999.99',
             'bathrooms' => 'sometimes|integer|min:0|max:32767',
