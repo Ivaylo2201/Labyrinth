@@ -18,7 +18,24 @@ class PropertyController extends Controller
     public function store(Request $request)
     {
         // Implement validation rules
-        $property = Property::create($request->all());
+        $validated = $request->validate([
+            'type' => 'required|string',
+            'price' => 'required|numeric',
+            'bathrooms' => 'required|integer',
+            'bedrooms' => 'required|integer',
+            'area' => 'required|integer',
+            'description' => 'nullable|string',
+        ]);
+
+        $property = Property::create([
+            'type' => $validated['type'],
+            'price' => $validated['price'],
+            'bathrooms' => $validated['bathrooms'],
+            'bedrooms' => $validated['bedrooms'],
+            'area' => $validated['area'],
+            'description' => $validated['description'],
+            'user_id' => $request->user()->id,
+        ]);
 
         Address::create([
             'country' => $request->country,
