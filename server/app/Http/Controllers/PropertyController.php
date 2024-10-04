@@ -9,7 +9,6 @@ use App\Models\Property;
 
 class PropertyController extends Controller
 {
-
     public function index()
     {
         return PropertyResource::collection(Property::all());
@@ -34,8 +33,8 @@ class PropertyController extends Controller
         if ($location) {
             $query->whereHas('address', function ($query) use ($location) {
                 $query->where('country', 'LIKE', "%{$location}%")
-                      ->orWhere('city', 'LIKE', "%{$location}%")
-                      ->orWhere('street', 'LIKE', "%{$location}%");
+                    ->orWhere('city', 'LIKE', "%{$location}%")
+                    ->orWhere('street', 'LIKE', "%{$location}%");
             });
         }
 
@@ -77,32 +76,41 @@ class PropertyController extends Controller
 
     public function show(int $id)
     {
-        return response()->json(Property::find($id), 200);
+        $property = Property::find($id);
+
+        if (!$property) {
+            return response()->json(['message' => 'Property not found'], 404);
+        }
+
+        return new PropertyResource(Property::find($id));
     }
 
     public function update(Request $request, int $id)
     {
         $property = Property::find($id);
 
-        $validated = $request->validate([
-            'status' => 'sometimes|string',
-            'type' => 'sometimes|string|max:10',
-            'price' => 'sometimes|numeric|min:0|max:99999999.99',
-            'bathrooms' => 'sometimes|integer|min:0|max:32767',
-            'bedrooms' => 'sometimes|integer|min:0|max:32767',
-            'area' => 'sometimes|numeric|min:0|max:999.99',
-            'description' => 'sometimes|string',
-            'user_id' => 'sometimes|exists:users,id',
-        ]);
+        if (!$property) {
+            return response()->json(['message' => 'Property not found'], 404);
+        }
 
-        $property->fill($validated);
+        if ($property->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'User does not own the property'], 403);
+        }
+
+        $property->fill($request->all());
         $property->save();
         return response()->json($property, 200);
     }
 
-    public function destroy(int $id)
+    public function destroy(Request $request, int $id)
     {
+        $property = Property::find($id);
+
+        if ($property->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'User does not own the property'], 403);
+        }
+
         Property::destroy($id);
-        return response()->json(['message' => "Property $id has been deleted"], 204);
+        return response()->json(['message' => "Property $id has been deleted"], 200);
     }
 }

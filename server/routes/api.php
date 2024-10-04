@@ -11,14 +11,22 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 // public routes
-Route::get('/properties/search', [PropertyController::class, 'search']);
-Route::get('/properties', [PropertyController::class, 'index']);
-Route::post('/signup', [UserController::class, 'store']);
-Route::get('/signin', [AuthController::class, 'signin']);
+Route::prefix('/properties')->group(function () {
+    Route::get('/{id}', [PropertyController::class, 'show']);
+    Route::get('/search', [PropertyController::class, 'search']);
+    Route::get('/', [PropertyController::class, 'index']);
+});
 
+Route::prefix('/auth')->group(function () {
+    Route::post('/signup', [UserController::class, 'store']);
+    Route::get('/signin', [AuthController::class, 'signin']);
+});
 
 // protected routes
-Route::middleware('auth:sanctum')->group(function() {
-    Route::post('/properties', [PropertyController::class, 'store']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::prefix('/properties')->group(function () {
+        Route::post('/', [PropertyController::class, 'store']);
+        Route::delete('/{id}', [PropertyController::class, 'destroy']);
+        Route::put('/{id}', [PropertyController::class, 'update']);
+    });
 });
- 
