@@ -12,8 +12,8 @@ Route::get('/user', function (Request $request) {
 
 // public routes
 Route::prefix('/properties')->group(function () {
-    Route::get('/{id}', [PropertyController::class, 'show']);
     Route::get('/search', [PropertyController::class, 'search']);
+    Route::get('/{id}', [PropertyController::class, 'show']);
     Route::get('/', [PropertyController::class, 'index']);
 });
 
@@ -25,8 +25,8 @@ Route::prefix('/auth')->group(function () {
 // protected routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('/properties')->group(function () {
-        Route::post('/', [PropertyController::class, 'store']);
         Route::delete('/{id}', [PropertyController::class, 'destroy']);
-        Route::put('/{id}', [PropertyController::class, 'update']);
+        Route::patch('/{id}', [PropertyController::class, 'update']);
+        Route::post('/', [PropertyController::class, 'store']);
     });
 });

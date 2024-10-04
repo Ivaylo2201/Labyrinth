@@ -99,6 +99,7 @@ class PropertyController extends Controller
 
         $property->fill($request->all());
         $property->save();
+
         return response()->json($property, 200);
     }
 
