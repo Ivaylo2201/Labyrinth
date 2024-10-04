@@ -18,8 +18,9 @@ Route::prefix('/properties')->group(function () {
 });
 
 Route::prefix('/auth')->group(function () {
-    Route::post('/signup', [UserController::class, 'store']);
-    Route::get('/signin', [AuthController::class, 'signin']);
+    Route::post('/signup', [AuthController::class, 'sign_up']);
+    Route::get('/signin', [AuthController::class, 'sign_in']);
+    Route::delete('/signout', [AuthController::class, 'sign_out']);
 });
 
 // protected routes
@@ -28,5 +29,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{id}', [PropertyController::class, 'destroy']);
         Route::patch('/{id}', [PropertyController::class, 'update']);
         Route::post('/', [PropertyController::class, 'store']);
+    });
+    Route::prefix('/profile')->group(function () {
+        Route::get('/', [UserController::class, 'index']);
+        Route::patch('/reset', [UserController::class, 'reset']);
+        Route::delete('/delete', [UserController::class, 'destroy']);
     });
 });
