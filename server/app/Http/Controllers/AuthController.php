@@ -11,9 +11,14 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+    /*
+        {
+            "token": '8|gwZ8tQCfAoRDmLrEgBP4LoW82B2LsFiE5PThDEZV3ad198ad'
+        } 
+    */
     public function sign_in(Request $request): JsonResponse
     {
-        $user = User::where('username', $request->username)->firstOrFail();
+        $user = User::where('email', $request->email)->firstOrFail();
 
         if (!Hash::check($request->password, $user->password)) 
             return response()->json([
@@ -27,11 +32,18 @@ class AuthController extends Controller
         ], Response::HTTP_OK);
     }
 
+    /*
+        {
+            "user": { "email": "test@gmail.com", ... },
+            "token": '8|gwZ8tQCfAoRDmLrEgBP4LoW82B2LsFiE5PThDEZV3ad198ad'
+        }
+    */
     public function sign_up(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
+            'email' => 'required|email|unique:users,email',
             'username' => 'required|string|unique:users,username',
-            'password' => 'required|string|min:5',
+            'password' => 'required|string|min:5|confirmed',
             'phone_number' => 'required|nullable|string',
             'location' => 'nullable|string',
         ]);
@@ -45,6 +57,7 @@ class AuthController extends Controller
         $data = $validator->validated();
 
         $user = User::create([
+            'email' => $data['email'],
             'username' => $data['username'],
             'password' => bcrypt($data['password']),
             'phone_number' => $data['phone_number'],
@@ -66,10 +79,11 @@ class AuthController extends Controller
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 
+    // SECURITY FLAW DO NOT USE
     public function reset(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'username' => 'required|string|exists:users,username',
+            'email' => 'required|email|exists:users,email',
             'password' => 'required|string',
         ]);
 
@@ -82,7 +96,7 @@ class AuthController extends Controller
 
         $data = $validator->validated();
 
-        $user = User::where('username', $data['username'])->first();
+        $user = User::where('email', $data['email'])->first();
         $password = $data['password'];
 
         if (Hash::check($password, $user->password)) {

@@ -75,7 +75,11 @@ class PropertyController extends Controller
             'bedrooms' => 'required|integer|min:1',
             'area' => 'required|integer|min:1',
             'description' => 'nullable|string',
-            'features.*' => 'integer',
+            'features' => 'required|array',
+            'images' => 'required|array',
+            'country' => 'required|string',
+            'city' => 'required|string',
+            'street' => 'required|string',
         ]);
 
         if ($validator->fails())
@@ -98,9 +102,9 @@ class PropertyController extends Controller
         ]);
 
         Address::create([
-            'country' => $request->country,
-            'city' => $request->city,
-            'street' => $request->street,
+            'country' => $data['country'],
+            'city' => $data['city'],
+            'street' => $data['street'],
             'property_id' => $property->id,
         ]);
 
