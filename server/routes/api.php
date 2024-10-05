@@ -1,0 +1,38 @@
+<?php
+
+use App\Http\Controllers\AuthController;
+use Illuminate\Http\Request;
+use App\Http\Controllers\PropertyController;
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/user', function (Request $request) {
+    return $request->user();
+})->middleware('auth:sanctum');
+
+// public routes
+Route::prefix('/properties')->group(function () {
+    Route::get('/search', [PropertyController::class, 'search']);
+    Route::get('/{id}', [PropertyController::class, 'show']);
+    Route::get('/', [PropertyController::class, 'index']);
+});
+
+Route::prefix('/auth')->group(function () {
+    Route::post('/signup', [AuthController::class, 'sign_up']);
+    Route::get('/signin', [AuthController::class, 'sign_in']);
+    Route::delete('/signout', [AuthController::class, 'sign_out']);
+});
+
+// protected routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::prefix('/properties')->group(function () {
+        Route::delete('/{id}', [PropertyController::class, 'destroy']);
+        Route::patch('/{id}', [PropertyController::class, 'update']);
+        Route::post('/', [PropertyController::class, 'store']);
+    });
+    Route::prefix('/profile')->group(function () {
+        Route::get('/', [UserController::class, 'index']);
+        Route::patch('/reset', [UserController::class, 'reset']);
+        Route::delete('/delete', [UserController::class, 'destroy']);
+    });
+});
