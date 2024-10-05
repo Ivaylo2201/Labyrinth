@@ -5,8 +5,11 @@ import { useState } from "react";
 export default function Login() {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
+  const [rePassword, setRePassword] = useState("");
+
   const [emailIsValid, setEmailIsValid] = useState<null | boolean>(null);
   const [passwordIsValid, setPasswordIsValid] = useState<null | boolean>(null);
+  const [rePasswordIsValid, setRePasswordIsValid] = useState<null | boolean>(null);
 
   let emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
   let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.{8,}).*$/;
@@ -16,8 +19,14 @@ export default function Login() {
 
     if (name === "email") {
       setEmailAddress(value);
+      setEmailIsValid(value ? emailRegex.test(value) : null); // Validate email
     } else if (name === "password") {
       setPassword(value);
+      setPasswordIsValid(value ? passwordRegex.test(value) : null); // Validate password
+      setRePasswordIsValid(rePassword ? value === rePassword : null); // Check rePassword validation
+    } else if (name === "rePassword") {
+      setRePassword(value);
+      setRePasswordIsValid(value ? value === password : null); // Check rePassword validity
     }
   };
 
@@ -36,6 +45,13 @@ export default function Login() {
       ? "border-green-500" // Valid state
       : "border-red-500"; // Invalid state
 
+  const rePasswordBorderColor =
+    rePasswordIsValid === null
+      ? "border-black" // Empty state
+      : rePasswordIsValid
+      ? "border-green-500" // Valid state
+      : "border-red-500"; // Invalid state
+
   return (
     <div className="relative w-full overflow-hidden h-screen">
       <div
@@ -45,8 +61,8 @@ export default function Login() {
       <div className="absolute inset-0 bg-black bg-opacity-20 backdrop-blur-sm"></div>
 
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-72  h-min backdrop-blur-md bg-[#E0E0E0]  bg-opacity-60 p-4 rounded-lg flex justify-center text-center flex-col">
-          <h2 className="text-3xl text-center pb-8">Login</h2>
+        <div className="w-72 h-min backdrop-blur-md bg-[#E0E0E0] bg-opacity-60 p-4 rounded-lg flex justify-center text-center flex-col">
+          <h2 className="text-3xl text-center pb-8">Register</h2>
           <form action="" className="flex justify-center flex-col items-center">
             <input
               type="text"
@@ -56,7 +72,7 @@ export default function Login() {
               id="email"
               placeholder="Email..."
               style={{ backgroundColor: "rgba(0, 0, 0, 0.0)" }}
-              className={`bg-transparent p-1 w-full text-md font-thin text-black border-b-2 ${emailBorderColor} placeholder-black mb-5 focus:outline-none -webkit-autofill-bg-transparent`}
+              className={`bg-transparent p-1 w-full text-md font-thin text-black border-b-2 ${emailBorderColor} placeholder-black mb-5 focus:outline-none`}
             />
             <input
               type="password"
@@ -68,8 +84,17 @@ export default function Login() {
               className={`bg-transparent p-1 w-full text-md font-thin text-black border-b-2 ${passwordBorderColor} placeholder-black mb-5 focus:outline-none `}
             />
             <input
+              type="password"
+              name="rePassword"
+              value={rePassword}
+              onChange={onChange}
+              id="rePassword"
+              placeholder="Confirm password..."
+              className={`bg-transparent p-1 w-full text-md font-thin text-black border-b-2 ${rePasswordBorderColor} placeholder-black mb-5 focus:outline-none `}
+            />
+            <input
               type="submit"
-              value="Sign in"
+              value="Sign up"
               className="text-xl font-bold text-white bg-[#212121] rounded-md p-2 w-44 hover:bg-[#393939] transition-colors duration-300 cursor-pointer"
             />
           </form>
@@ -78,14 +103,12 @@ export default function Login() {
           </Link>
           <p className="text-md mt-3 font-light ">
             Don't have an account?{" "}
-            <Link to="/register" className="text-[#551a6e]">
+            <Link to="register" className="text-[#551a6e]">
               Sign up
             </Link>
           </p>
         </div>
       </div>
-      
     </div>
-    
   );
 }
