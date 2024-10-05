@@ -10,7 +10,7 @@ use App\Models\Image;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Validator;
 
 class PropertyController extends Controller
 {
@@ -24,22 +24,24 @@ class PropertyController extends Controller
 
     public function search(Request $request): JsonResponse
     {
-        try {
-            $validated = $request->validate([
-                'status' => 'string|in:buy,rent',
-                'type' => 'string|in:apartment,house',
-                'location' => 'string',
-            ]);
-        } catch (ValidationException $e) {
+        $validator = Validator::make($request->all(), [
+            'status' => 'string|in:buy,rent',
+            'type' => 'string|in:apartment,house',
+            'location' => 'string',
+        ]);
+
+        if ($validator->fails()) {
             return response()->json([
                 'message' => 'Validation failed.',
-                'errors' => $e->errors()
+                'errors' => $validator->errors()
             ], Response::HTTP_BAD_REQUEST);
         }
 
-        $status = $validated['status'] ?? null;
-        $type = $validated['type'] ?? null;
-        $location = $validated['location'] ?? null;
+        $data = $validator->validated();
+
+        $status = $data['status'] ?? null;
+        $type = $data['type'] ?? null;
+        $location = $data['location'] ?? null;
 
         $query = Property::with('address')->whereHas('address');
 
@@ -65,38 +67,35 @@ class PropertyController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        try {
-            $validated = $request->validate([
-                'status' => 'required|string',
-                'type' => 'required|string',
-                'price' => 'required|numeric',
-                'bathrooms' => 'required|integer',
-                'bedrooms' => 'required|integer',
-                'area' => 'required|integer',
-                'description' => 'nullable|string',
-            ]);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'message' => 'Validation failed.',
-                'errors' => $e->errors()
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        $property = Property::create([
-            'status' => $validated['status'],
-            'type' => $validated['type'],
-            'price' => $validated['price'],
-            'bathrooms' => $validated['bathrooms'],
-            'bedrooms' => $validated['bedrooms'],
-            'area' => $validated['area'],
-            'description' => $validated['description'],
-            'user_id' => $request->user()->id,
+        $validator = Validator::make($request->all(), [
+            'status' => 'required|string|in:buy,rent',
+            'type' => 'required|string|in:apartment,house',
+            'price' => 'required|numeric|min:1',
+            'bathrooms' => 'required|integer|min:1',
+            'bedrooms' => 'required|integer|min:1',
+            'area' => 'required|integer|min:1',
+            'description' => 'nullable|string',
+            'features.*' => 'integer',
         ]);
 
-        foreach ($request->file('images') as $image) {
-            $path = Storage::disk('public')->putFile('/images', $image);
-            Image::create(['image' => $path, 'property_id' => $property->id]);
-        }
+        if ($validator->fails())
+            return response()->json([
+                'message' => 'Validation failed.',
+                'errors' => $validator->errors()
+            ], Response::HTTP_BAD_REQUEST);
+
+        $data = $validator->validated();
+
+        $property = Property::create([
+            'status' => $data['status'],
+            'type' => $data['type'],
+            'price' => $data['price'],
+            'bathrooms' => $data['bathrooms'],
+            'bedrooms' => $data['bedrooms'],
+            'area' => $data['area'],
+            'description' => $data['description'],
+            'user_id' => $request->user()->id,
+        ]);
 
         Address::create([
             'country' => $request->country,
@@ -104,6 +103,14 @@ class PropertyController extends Controller
             'street' => $request->street,
             'property_id' => $property->id,
         ]);
+
+        foreach ($request->file('images') as $image) {
+            $path = Storage::disk('public')->putFile('/images', $image);
+            Image::create(['image' => $path, 'property_id' => $property->id]);
+        }
+
+        // 'features' is the array of the ids of each checked feature
+        $property->features()->attach($data['features']);
 
         return response()->json(
             new PropertyResource($property),
@@ -131,11 +138,22 @@ class PropertyController extends Controller
     {
         $property = Property::find($id);
 
-        if (!$property) {
+        if (!$property)
             return response()->json([
                 'message' => 'Property not found.'
             ], Response::HTTP_NOT_FOUND);
-        }
+
+        $validator = Validator::make($request->all(), [
+            'status' => 'string|in:buy,rent',
+            'price' => 'numeric|min:1',
+            'description' => 'nullable|string',
+        ]);
+
+        if ($validator->fails())
+            return response()->json([
+                'message' => 'Validation failed.',
+                'errors' => $validator->errors()
+            ], Response::HTTP_BAD_REQUEST);
 
         if ($property->user_id !== $request->user()->id) {
             return response()->json([
@@ -143,7 +161,7 @@ class PropertyController extends Controller
             ], Response::HTTP_FORBIDDEN);
         }
 
-        $property->fill($request->all());
+        $property->fill($validator->validated());
         $property->save();
 
         return response()->json($property, Response::HTTP_OK);
@@ -152,6 +170,11 @@ class PropertyController extends Controller
     public function destroy(Request $request, int $id): JsonResponse
     {
         $property = Property::find($id);
+
+        if (!$property)
+            return response()->json([
+                'message' => 'Property not found.'
+            ], Response::HTTP_NOT_FOUND);
 
         if ($property->user_id !== $request->user()->id) {
             return response()->json([

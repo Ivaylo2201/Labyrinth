@@ -20,11 +20,12 @@ Route::prefix('/properties')->group(function () {
 Route::prefix('/auth')->group(function () {
     Route::post('/signup', [AuthController::class, 'sign_up']);
     Route::get('/signin', [AuthController::class, 'sign_in']);
-    Route::delete('/signout', [AuthController::class, 'sign_out']);
+    Route::patch('/reset', [AuthController::class, 'reset']); // huge security flaw
 });
 
 // protected routes
 Route::middleware('auth:sanctum')->group(function () {
+    Route::delete('/auth/signout', [AuthController::class, 'sign_out']);
     Route::prefix('/properties')->group(function () {
         Route::delete('/{id}', [PropertyController::class, 'destroy']);
         Route::patch('/{id}', [PropertyController::class, 'update']);
@@ -32,7 +33,6 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::prefix('/profile')->group(function () {
         Route::get('/', [UserController::class, 'index']);
-        Route::patch('/reset', [UserController::class, 'reset']);
         Route::delete('/delete', [UserController::class, 'destroy']);
     });
 });

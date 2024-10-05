@@ -34,4 +34,9 @@ class Property extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function features()
+    {
+        return $this->belongsToMany(Feature::class);
+    }
 }

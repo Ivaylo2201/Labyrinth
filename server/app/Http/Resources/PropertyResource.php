@@ -25,6 +25,7 @@ class PropertyResource extends JsonResource
             'area' => $this->area,
             'description' => $this->description,
             'images' => $this->images->pluck('image'),
+            'features' => $this->features->pluck('name'),
             'created_at' => $this->created_at,
             'user' => new UserResource($this->user),
         ];
