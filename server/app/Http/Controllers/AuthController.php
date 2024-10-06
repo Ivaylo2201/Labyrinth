@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\VerificationCodeEmail;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -79,12 +81,12 @@ class AuthController extends Controller
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 
-    // SECURITY FLAW DO NOT USE
     public function reset(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|exists:users,email',
-            'password' => 'required|string',
+            'email' => 'required|email',
+            'phone_number' => 'required|string',
+            'password' => 'required|string|confirmed',
         ]);
 
         if ($validator->fails()) {
@@ -96,7 +98,15 @@ class AuthController extends Controller
 
         $data = $validator->validated();
 
-        $user = User::where('email', $data['email'])->first();
+        $user = User::where('email', $data['email'])
+                    ->where('phone_number', $data['phone_number'])
+                    ->first();
+
+        if (!$user)
+            return response()->json([
+                'message' => 'Incorrect phone number.'
+            ], Response::HTTP_BAD_REQUEST);
+        
         $password = $data['password'];
 
         if (Hash::check($password, $user->password)) {
