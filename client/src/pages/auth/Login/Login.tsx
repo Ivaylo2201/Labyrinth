@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import bg2 from "../../assets/bg2.png";
+import bg2 from "../../../assets/bg2.png";
 import { useState } from "react";
 
 export default function Login() {
@@ -73,7 +73,7 @@ export default function Login() {
               className="text-xl font-bold text-white bg-[#212121] rounded-md p-2 w-44 hover:bg-[#393939] transition-colors duration-300 cursor-pointer"
             />
           </form>
-          <Link to="fogot-password" className="text-md mt-3 font-light text-[#551a6e]">
+          <Link to="/forgot-password" className="text-md mt-3 font-light text-[#551a6e]">
             Forgot password?
           </Link>
           <p className="text-md mt-3 font-light ">
@@ -84,8 +84,6 @@ export default function Login() {
           </p>
         </div>
       </div>
-      
     </div>
-    
   );
 }
