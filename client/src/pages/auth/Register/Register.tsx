@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import bg2 from "../../assets/bg2.png";
+import bg2 from "../../../assets/bg2.png";
 import { useState } from "react";
 
 export default function Login() {
@@ -51,31 +51,33 @@ export default function Login() {
       rePasswordIsValid &&
       phoneNumberIsValid
     ) {
+      const payload = {
+        email: emailAddress,
+        username: username,
+        password: password,
+        password_confirmation: rePassword,
+        phone_number: phoneNumber,
+      };
+
+      console.log("Sending payload:", payload); // Debugging line
+
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/auth/signup/", {
+        const response = await fetch("http://localhost:8000/api/auth/signup/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            email: emailAddress,
-            username: username,
-            password: password,
-            phone_number: phoneNumber,
-          }),
+          body: JSON.stringify(payload),
         });
 
         if (response.ok) {
           const data = await response.json();
           console.log("Registration Successful:", data);
-          // You can handle success (e.g., navigate to login page, show success message)
         } else {
           console.error("Failed to register:", response.statusText);
-          // You can handle failure (e.g., show error message)
         }
       } catch (error) {
         console.error("Error occurred during registration:", error);
-        // Handle network or other errors
       }
     } else {
       console.error("Validation failed. Please fill all fields correctly.");
@@ -130,7 +132,7 @@ export default function Login() {
         <div className="w-72 h-min backdrop-blur-md bg-[#E0E0E0] bg-opacity-60 p-4 rounded-lg flex justify-center text-center flex-col">
           <h2 className="text-3xl text-center pb-8">Register</h2>
           <form
-            action="http://127.0.0.1:8000/api/auth/signup/"
+            action="http://localhost:8000/api/auth/signup/"
             onSubmit={handleSubmit}
             className="flex justify-center flex-col items-center"
           >
