@@ -1,12 +1,11 @@
 import { Link } from "react-router-dom";
 import bg2 from "../../../assets/bg2.png";
 import { useState } from "react";
+import axios from "axios";
 
 export default function Login() {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
-  const [emailIsValid, setEmailIsValid] = useState<null | boolean>(null);
-  const [passwordIsValid, setPasswordIsValid] = useState<null | boolean>(null);
 
   let emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
   let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.{8,}).*$/;
@@ -21,20 +20,43 @@ export default function Login() {
     }
   };
 
-  const emailBorderColor =
-    emailIsValid === null
-      ? "border-black" // Empty state
-      : emailIsValid
-      ? "border-green-500" // Valid state
-      : "border-red-500"; // Invalid state
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-  // Determine border color based on password validity
-  const passwordBorderColor =
-    passwordIsValid === null
-      ? "border-black" // Empty state
-      : passwordIsValid
-      ? "border-green-500" // Valid state
-      : "border-red-500"; // Invalid state
+    const payload = {
+      email: emailAddress,
+      password: password,
+    };
+
+    console.log("Sending payload:", payload);
+
+    try {
+      const response = await axios.post("http://localhost:8000/api/auth/signin/", payload, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.status === 200 || response.status === 201) {
+        console.log("Login Successful:", response.data);
+        const data = response.data;
+        const token = data.token;
+
+        // Set default Authorization header for future requests
+        axios.defaults.headers.common["Authorization"] = token.split("|")[1];
+        localStorage.setItem("user", JSON.stringify(data));
+      } else {
+        console.error("Failed to log in:", response.statusText);
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        // Handle the specific error, e.g. set error messages
+        setErrorMsg(error.response?.data.errors || ["An error occurred."]);
+      } else {
+        console.error("Unexpected error:", error);
+      }
+    }
+  };
 
   return (
     <div className="relative w-full overflow-hidden h-screen">
@@ -47,7 +69,7 @@ export default function Login() {
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="w-72  h-min backdrop-blur-md bg-[#E0E0E0]  bg-opacity-60 p-4 rounded-lg flex justify-center text-center flex-col">
           <h2 className="text-3xl text-center pb-8">Login</h2>
-          <form action="" className="flex justify-center flex-col items-center">
+          <form onSubmit={handleSubmit} className="flex justify-center flex-col items-center">
             <input
               type="text"
               name="email"
@@ -56,7 +78,7 @@ export default function Login() {
               id="email"
               placeholder="Email..."
               style={{ backgroundColor: "rgba(0, 0, 0, 0.0)" }}
-              className={`bg-transparent p-1 w-full text-md font-thin text-black border-b-2 ${emailBorderColor} placeholder-black mb-5 focus:outline-none -webkit-autofill-bg-transparent`}
+              className={`bg-transparent p-1 w-full text-md font-thin text-black border-b-2 border-black placeholder-black mb-5 focus:outline-none -webkit-autofill-bg-transparent focus:scale-105`}
             />
             <input
               type="password"
@@ -65,7 +87,7 @@ export default function Login() {
               onChange={onChange}
               id="password"
               placeholder="Password..."
-              className={`bg-transparent p-1 w-full text-md font-thin text-black border-b-2 ${passwordBorderColor} placeholder-black mb-5 focus:outline-none `}
+              className={`bg-transparent p-1 w-full text-md font-thin text-black border-b-2 border-black placeholder-black mb-5 focus:outline-none focus:scale-105`}
             />
             <input
               type="submit"
