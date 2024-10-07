@@ -10,16 +10,14 @@ const Navbar = () => {
           <h1 className="text-2xl font-bold">Labyrinth</h1>
         </div>
         <div className="w-2/5 flex items-center gap-4 justify-center">
-          <NavButton name="For sell" location="/" className="primary-button" />
+          <NavButton name="For sale" location="/" className="primary-button" />
           <NavButton name="For rent" location="/" className="primary-button" />
           <NavButton name="Contact us" location="/" className="primary-button" />
           <NavButton name="Blogs" location="/" className="primary-button" />
-
-
         </div>
         <div className="flex justify-end gap-5 w-2/5 p-2">
-          <NavButton name="Login" location="/" className="primary-button" />
-          <NavButton name="Register" location="/" className="primary-button" />
+          <NavButton name="Login" location="/login" className="primary-button" />
+          <NavButton name="Register" location="/register" className="primary-button" />
         </div>
         <ul></ul>
       </nav>
