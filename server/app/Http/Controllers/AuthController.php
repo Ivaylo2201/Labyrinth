@@ -22,7 +22,7 @@ class AuthController extends Controller
     {
         $user = User::where('email', $request->email)->firstOrFail();
 
-        if (!Hash::check($request->password, $user->password)) 
+        if (!Hash::check($request->password, $user->password))
             return response()->json([
                 'message' => 'Invalid credentials.'
             ], Response::HTTP_BAD_REQUEST);
@@ -46,7 +46,7 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users,email',
             'username' => 'required|string|unique:users,username',
             'password' => 'required|string|min:5|confirmed',
-            'phone_number' => 'required|nullable|string',
+            'phone_number' => ['required', 'string'],
             'location' => 'nullable|string',
         ]);
 
@@ -54,7 +54,7 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Validation failed.',
                 'errors' => $validator->errors()
-            ], Response::HTTP_BAD_REQUEST);       
+            ], Response::HTTP_BAD_REQUEST);
 
         $data = $validator->validated();
 
@@ -99,14 +99,14 @@ class AuthController extends Controller
         $data = $validator->validated();
 
         $user = User::where('email', $data['email'])
-                    ->where('phone_number', $data['phone_number'])
-                    ->first();
+            ->where('phone_number', $data['phone_number'])
+            ->first();
 
         if (!$user)
             return response()->json([
                 'message' => 'Incorrect phone number.'
             ], Response::HTTP_BAD_REQUEST);
-        
+
         $password = $data['password'];
 
         if (Hash::check($password, $user->password)) {

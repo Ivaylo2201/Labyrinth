@@ -19,7 +19,7 @@ Route::prefix('/properties')->group(function () {
 
 Route::prefix('/auth')->group(function () {
     Route::post('/signup', [AuthController::class, 'sign_up']);
-    Route::get('/signin', [AuthController::class, 'sign_in']);
+    Route::post('/signin', [AuthController::class, 'sign_in']);
     Route::patch('/reset', [AuthController::class, 'reset']); // huge security flaw
 });
 
