@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\PropertyResource;
+use App\Http\Resources\PropertyShortResource;
 use App\Models\Address;
 use Illuminate\Http\Request;
 use App\Models\Property;
@@ -17,7 +18,7 @@ class PropertyController extends Controller
     public function index(): JsonResponse
     {
         return response()->json(
-            PropertyResource::collection(Property::all()),
+            PropertyShortResource::collection(Property::all()),
             Response::HTTP_OK
         );
     }
