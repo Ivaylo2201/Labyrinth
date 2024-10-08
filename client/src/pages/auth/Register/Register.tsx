@@ -1,6 +1,7 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import bg2 from "../../../assets/bg2.png";
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
+import axios from "axios";
 
 export default function Login() {
   const [emailAddress, setEmailAddress] = useState("");
@@ -15,6 +16,11 @@ export default function Login() {
   const [rePasswordIsValid, setRePasswordIsValid] = useState<null | boolean>(null);
   const [phoneNumberIsValid, setPhoneNumberIsValid] = useState<null | boolean>(null);
 
+  const [errorMsg, setErrorMsg] = useState<string[]>([]);
+  const [serverMsg, setServerMsg] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
   let emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
   let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.{8,}).*$/;
   let phoneNumberRegex = /^(((\+|00)359[- ]?)|(0))(8[- ]?[789]([- ]?\d){7})$/gm;
@@ -24,33 +30,51 @@ export default function Login() {
 
     if (name === "email") {
       setEmailAddress(value);
-      setEmailIsValid(value ? emailRegex.test(value) : null); // Validate email
+      setEmailIsValid(value ? emailRegex.test(value) : null);
     } else if (name === "username") {
       setUsername(value);
       setUsernameIsValid(value ? value.length > 4 : null);
     } else if (name === "password") {
       setPassword(value);
-      setPasswordIsValid(value ? passwordRegex.test(value) : null); // Validate password
-      setRePasswordIsValid(rePassword ? value === rePassword : null); // Check rePassword validation
+      setPasswordIsValid(value ? passwordRegex.test(value) : null);
+      setRePasswordIsValid(rePassword ? value === rePassword : null);
     } else if (name === "rePassword") {
       setRePassword(value);
-      setRePasswordIsValid(value ? value === password : null); // Check rePassword validity
+      setRePasswordIsValid(value ? value === password : null);
     } else if (name === "phoneNumber") {
       setPhoneNumber(value);
-      setPhoneNumberIsValid(value ? phoneNumberRegex.test(value) : null); // Check rePassword validity
+      setPhoneNumberIsValid(value ? phoneNumberRegex.test(value) : null);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    setServerMsg("");
+    setErrorMsg([]);
     e.preventDefault();
+    let msg: SetStateAction<string[]> = [];
+    if (!emailIsValid) {
+      msg.push("Please enter a valid email address.");
+    }
+    if (!usernameIsValid) {
+      msg.push("\nPlease enter a valid username.");
+    }
+    if (!passwordIsValid) {
+      msg.push(
+        "\nPassword must be at least 8 characters, include 1 lowercase, 1 uppercase, and 1 digit."
+      );
+    }
+    if (!rePasswordIsValid) {
+      msg.push("\nPasswords do not match.");
+    }
+    if (!phoneNumberIsValid) {
+      msg.push("\nPlease enter a valid phone number.");
+    }
+    setErrorMsg(msg);
+    if (msg.length) {
+      return;
+    } else {
+      setLoading(true);
 
-    if (
-      emailIsValid &&
-      usernameIsValid &&
-      passwordIsValid &&
-      rePasswordIsValid &&
-      phoneNumberIsValid
-    ) {
       const payload = {
         email: emailAddress,
         username: username,
@@ -59,83 +83,50 @@ export default function Login() {
         phone_number: phoneNumber,
       };
 
-      console.log("Sending payload:", payload); // Debugging line
+      console.log("Sending payload:", payload);
 
       try {
-        const response = await fetch("http://localhost:8000/api/auth/signup/", {
-          method: "POST",
+        const response = await axios.post("http://localhost:8000/api/auth/signup/", payload, {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(payload),
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          console.log("Registration Successful:", data);
+        if (response.status === 200 || response.status === 201) {
+          console.log("Registration Successful:", response.data);
+          const data = response.data;
+          const token = data.token;
+          axios.defaults.headers.common["Authorization"] = ` Bearer ${token.split("|")[1]}`;
+          localStorage.setItem("user", JSON.stringify(data));
+          localStorage.setItem("token", token.split("|")[1]);
+          setLoading(false);
+          navigate("/");
         } else {
           console.error("Failed to register:", response.statusText);
         }
       } catch (error) {
-        console.error("Error occurred during registration:", error);
+        if (axios.isAxiosError(error)) {
+          setServerMsg(error.response?.data.errors);
+        } else {
+          console.error("Unexpected error:", error);
+        }
       }
-    } else {
-      console.error("Validation failed. Please fill all fields correctly.");
     }
+    setLoading(false);
   };
-
-  const emailBorderColor =
-    emailIsValid === null
-      ? "border-black" // Empty state
-      : emailIsValid
-      ? "border-green-500" // Valid state
-      : "border-red-500"; // Invalid state
-
-  // Determine border color based on password validity
-  const passwordBorderColor =
-    passwordIsValid === null
-      ? "border-black" // Empty state
-      : passwordIsValid
-      ? "border-green-500" // Valid state
-      : "border-red-500"; // Invalid state
-
-  const rePasswordBorderColor =
-    rePasswordIsValid === null
-      ? "border-black" // Empty state
-      : rePasswordIsValid
-      ? "border-green-500" // Valid state
-      : "border-red-500"; // Invalid state
-
-  const usernameBorderColor =
-    usernameIsValid === null
-      ? "border-black" // Empty state
-      : usernameIsValid
-      ? "border-green-500" // Valid state
-      : "border-red-500"; // Invalid state
-
-  const phoneNumberBorderColor =
-    phoneNumberIsValid === null
-      ? "border-black" // Empty state
-      : phoneNumberIsValid
-      ? "border-green-500" // Valid state
-      : "border-red-500"; // Invalid state
 
   return (
     <div className="relative w-full overflow-hidden h-screen">
       <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${bg2})` }} // Dynamically set background image
+        style={{ backgroundImage: `url(${bg2})` }}
       />
       <div className="absolute inset-0 bg-black bg-opacity-20 backdrop-blur-sm"></div>
 
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-72 h-min backdrop-blur-md bg-[#E0E0E0] bg-opacity-60 p-4 rounded-lg flex justify-center text-center flex-col">
+        <div className="w-96 h-min backdrop-blur-md bg-[#E0E0E0] bg-opacity-60 p-4 rounded-lg flex justify-center text-center flex-col">
           <h2 className="text-3xl text-center pb-8">Register</h2>
-          <form
-            action="http://localhost:8000/api/auth/signup/"
-            onSubmit={handleSubmit}
-            className="flex justify-center flex-col items-center"
-          >
+          <form onSubmit={handleSubmit} className="flex justify-center flex-col items-center mb-2">
             <input
               type="text"
               name="email"
@@ -144,7 +135,7 @@ export default function Login() {
               id="email"
               placeholder="Email..."
               style={{ backgroundColor: "rgba(0, 0, 0, 0.0)" }}
-              className={`bg-transparent p-1 w-full text-md font-thin text-black border-b-2 ${emailBorderColor} placeholder-black mb-5 focus:outline-none`}
+              className={`bg-transparent p-1 w-full text-md font-thin text-black border-b-2 placeholder-black mb-5 focus:outline-none border-black focus:scale-105`}
             />
             <input
               type="text"
@@ -154,7 +145,7 @@ export default function Login() {
               id="username"
               placeholder="Username.."
               style={{ backgroundColor: "rgba(0, 0, 0, 0.0)" }}
-              className={`bg-transparent p-1 w-full text-md font-thin text-black border-b-2 ${usernameBorderColor} placeholder-black mb-5 focus:outline-none`}
+              className={`bg-transparent p-1 w-full text-md font-thin text-black border-b-2 placeholder-black mb-5 focus:outline-none border-black focus:scale-105`}
             />
             <input
               type="text"
@@ -164,7 +155,7 @@ export default function Login() {
               id="phoneNumber"
               placeholder="Phone number..."
               style={{ backgroundColor: "rgba(0, 0, 0, 0.0)" }}
-              className={`bg-transparent p-1 w-full text-md font-thin text-black border-b-2 ${phoneNumberBorderColor} placeholder-black mb-5 focus:outline-none`}
+              className={`bg-transparent p-1 w-full text-md font-thin text-black border-b-2 placeholder-black mb-5 focus:outline-none border-black focus:scale-105`}
             />
             <input
               type="password"
@@ -173,7 +164,7 @@ export default function Login() {
               onChange={onChange}
               id="password"
               placeholder="Password..."
-              className={`bg-transparent p-1 w-full text-md font-thin text-black border-b-2 ${passwordBorderColor} placeholder-black mb-5 focus:outline-none `}
+              className={`bg-transparent p-1 w-full text-md font-thin text-black border-b-2 placeholder-black mb-5 focus:outline-none border-black focus:scale-105`}
             />
             <input
               type="password"
@@ -182,14 +173,32 @@ export default function Login() {
               onChange={onChange}
               id="rePassword"
               placeholder="Confirm password..."
-              className={`bg-transparent p-1 w-full text-md font-thin text-black border-b-2 ${rePasswordBorderColor} placeholder-black mb-5 focus:outline-none `}
+              className={`bg-transparent p-1 w-full text-md font-thin text-black border-b-2 placeholder-black mb-5 focus:outline-none border-black focus:scale-105`}
             />
+
             <input
               type="submit"
               value="Sign up"
-              className="text-xl font-bold text-white bg-[#212121] rounded-md p-2 w-44 hover:bg-[#393939] transition-colors duration-300 cursor-pointer"
+              className="text-xl mt-5 font-bold text-white bg-[#212121] rounded-md p-2 w-44 hover:bg-[#393939] transition-colors duration-300 cursor-pointer "
             />
           </form>
+          <p className="text-red-600 text-sm">
+            {
+              Array.isArray(errorMsg)
+                ? errorMsg.map((msg, index) => (
+                    <span key={index}>
+                      {msg}
+                      <br />
+                    </span>
+                  ))
+                : errorMsg // If errorMsg is not an array, just display it
+            }
+          </p>
+          {Object.entries(serverMsg).map(([field, messages]) => (
+            <p className="text-red-600" key={field}>
+              {Array.isArray(messages) ? messages.join(", ") : messages}
+            </p>
+          ))}
           <p className="text-md mt-3 font-light ">
             Already have an account?{" "}
             <Link to="/login" className="text-[#551a6e]">
@@ -198,6 +207,32 @@ export default function Login() {
           </p>
         </div>
       </div>
+      {loading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="loading-spinner">
+            <svg
+              className="animate-spin h-16 w-16 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
