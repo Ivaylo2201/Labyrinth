@@ -1,27 +1,23 @@
 import React from "react";
-import { BrowserRouter as Router, useLocation } from "react-router-dom";
-import "./index.css";
+import RouterConfig from "./routes/router";
+import { AuthProvider } from "./context/AuthContext";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Router } from "react-router-dom";
 
-import RouterConfig from "./router";
-import Navbar from "./components/Navbar/Navbar";
+const queryClient = new QueryClient();
 
-const App: React.FC = () => {
-  const location = useLocation();
-  const noNavRoutes = ["/login", "/register"];
-
+function App() {
   return (
-    <div>
-      {}
-      {!noNavRoutes.includes(location.pathname) && <Navbar />}
-      <RouterConfig />
-    </div>
-  );
-};
-
-export default function AppWrapper() {
-  return (
-    <Router>
-      <App />
-    </Router>
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          {" "}
+          {/* Wrap your routes with BrowserRouter */}
+          <RouterConfig />
+        </BrowserRouter>
+      </QueryClientProvider>
+    </AuthProvider>
   );
 }
+
+export default App;

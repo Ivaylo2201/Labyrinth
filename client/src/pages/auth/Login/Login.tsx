@@ -1,14 +1,15 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import bg2 from "../../../assets/bg2.png";
 import { useState } from "react";
-import axios from "axios";
+import { useAuth } from "../../../context/AuthContext";
 
 export default function Login() {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  let emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-  let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.{8,}).*$/;
+  const { login } = useAuth(); // Extract login from AuthContext
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -21,48 +22,17 @@ export default function Login() {
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    setLoading(true);
     e.preventDefault();
-
-    const payload = {
-      email: emailAddress,
-      password: password,
-    };
-
-    console.log("Sending payload:", payload);
-
-    try {
-      const response = await axios.post("http://localhost:8000/api/auth/signin/", payload, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.status === 200 || response.status === 201) {
-        console.log("Login Successful:", response.data);
-        const data = response.data;
-        const token = data.token;
-
-        // Set default Authorization header for future requests
-        axios.defaults.headers.common["Authorization"] = token.split("|")[1];
-        localStorage.setItem("user", JSON.stringify(data));
-      } else {
-        console.error("Failed to log in:", response.statusText);
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        // Handle the specific error, e.g. set error messages
-        setErrorMsg(error.response?.data.errors || ["An error occurred."]);
-      } else {
-        console.error("Unexpected error:", error);
-      }
-    }
+    await login(emailAddress, password, navigate);
+    setLoading(false);  
   };
 
   return (
     <div className="relative w-full overflow-hidden h-screen">
       <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${bg2})` }} // Dynamically set background image
+        style={{ backgroundImage: `url(${bg2})` }}
       />
       <div className="absolute inset-0 bg-black bg-opacity-20 backdrop-blur-sm"></div>
 
@@ -106,6 +76,32 @@ export default function Login() {
           </p>
         </div>
       </div>
+      {loading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="loading-spinner">
+            <svg
+              className="animate-spin h-16 w-16 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

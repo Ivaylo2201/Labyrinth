@@ -18,10 +18,12 @@ export default function Home() {
         <div className="relative inset-0 flex gap-1 w-3/6 h-12 bg-slate-50 p-2 rounded-full my-10 justify-between">
           <div className="relative">
             <select className="h-8 w-full text-sm text-gray-500 bg-transparent appearance-none mx-2 pr-8 focus:outline-none">
-              <option selected>Choose a action</option>
-              <option value="buy">For buy</option>
-              <option value="sell">For sell</option>
-              <option value="rent">For rent</option>
+              <option defaultValue="Choose a action" selected>
+                Choose a action
+              </option>
+              <option defaultValue="buy">For buy</option>
+              <option defaultValue="sell">For sell</option>
+              <option defaultValue="rent">For rent</option>
             </select>
             <div className="absolute inset-y-0 right-0 flex items-center pointer-events-none">
               <svg
@@ -42,11 +44,13 @@ export default function Home() {
           </div>
           <div className="relative">
             <select className="h-8 w-full text-sm text-gray-500 bg-transparent appearance-none pr-8 focus:outline-none">
-              <option selected>Choose a property</option>
-              <option value="apartment">Apartment</option>
-              <option value="house">House</option>
-              <option value="garage">Garage</option>
-              <option value="office">Office</option>
+              <option defaultValue="Choose a property" selected>
+                Choose a property
+              </option>
+              <option defaultValue="apartment">Apartment</option>
+              <option defaultValue="house">House</option>
+              <option defaultValue="garage">Garage</option>
+              <option defaultValue="office">Office</option>
             </select>
             <div className="absolute inset-y-0 right-0 flex items-center pointer-events-none">
               <svg

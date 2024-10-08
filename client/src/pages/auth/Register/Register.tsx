@@ -96,8 +96,9 @@ export default function Login() {
           console.log("Registration Successful:", response.data);
           const data = response.data;
           const token = data.token;
-          axios.defaults.headers.common["Authorization"] = token.split("|")[1];
+          axios.defaults.headers.common["Authorization"] = ` Bearer ${token.split("|")[1]}`;
           localStorage.setItem("user", JSON.stringify(data));
+          localStorage.setItem("token", token.split("|")[1]);
           setLoading(false);
           navigate("/");
         } else {
@@ -111,6 +112,7 @@ export default function Login() {
         }
       }
     }
+    setLoading(false);
   };
 
   return (
