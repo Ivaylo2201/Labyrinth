@@ -183,16 +183,14 @@ export default function Login() {
             />
           </form>
           <p className="text-red-600 text-sm">
-            {
-              Array.isArray(errorMsg)
-                ? errorMsg.map((msg, index) => (
-                    <span key={index}>
-                      {msg}
-                      <br />
-                    </span>
-                  ))
-                : errorMsg // If errorMsg is not an array, just display it
-            }
+            {Array.isArray(errorMsg)
+              ? errorMsg.map((msg, index) => (
+                  <span key={index}>
+                    {msg}
+                    <br />
+                  </span>
+                ))
+              : errorMsg}
           </p>
           {Object.entries(serverMsg).map(([field, messages]) => (
             <p className="text-red-600" key={field}>
