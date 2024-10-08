@@ -33,13 +33,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const data = response.data;
         const token = data.token;
 
-        // Set the token and user data in localStorage
+       
         axios.defaults.headers.common["Authorization"] = `Bearer ${token.split("|")[1]}`;
         localStorage.setItem("token", token.split("|")[1]);
 
-        // Update authentication state
+        
         setIsAuthenticated(true);
-        navigate("/"); // Redirect after successful login
+        navigate("/"); 
       } else {
         console.error("Failed to log in:", response.statusText);
       }
@@ -70,7 +70,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       localStorage.removeItem("user");
       localStorage.removeItem("token");
-      setIsAuthenticated(false); // Update authentication state immediately
+      setIsAuthenticated(false); 
       console.log("Logged out successfully");
     } catch (error) {
       setIsAuthenticated(false);

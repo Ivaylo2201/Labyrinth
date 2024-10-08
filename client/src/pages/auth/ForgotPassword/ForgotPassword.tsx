@@ -18,27 +18,26 @@ export default function Register() {
   let phoneRegex = /^(?:\+359|0)\d{9}$/; // Bulgarian phone number format
   let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.{8,}).*$/;
 
-  // Handle input changes and validation
+ 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
     if (name === "email") {
       setEmailAddress(value);
-      setEmailIsValid(emailRegex.test(value)); // Validate email on input change
+      setEmailIsValid(emailRegex.test(value));
     } else if (name === "phone") {
       setPhoneNumber(value);
-      setPhoneIsValid(phoneRegex.test(value)); // Validate phone number on input change
+      setPhoneIsValid(phoneRegex.test(value));
     } else if (name === "password") {
       setPassword(value);
-      setPasswordIsValid(passwordRegex.test(value)); // Validate password format
-      setRePasswordIsValid(rePassword === value); // Ensure rePassword is updated
+      setPasswordIsValid(passwordRegex.test(value));
+      setRePasswordIsValid(rePassword === value);
     } else if (name === "rePassword") {
       setRePassword(value);
-      setRePasswordIsValid(value === password); // Validate rePassword
+      setRePasswordIsValid(value === password);
     }
   };
 
-  // Handle form submission (client-side validation)
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -64,7 +63,6 @@ export default function Register() {
       return;
     }
 
-    // If validation passes, check email and phone number with the server
     try {
       const response = await fetch("/api/check-email-phone", {
         method: "POST",
@@ -79,7 +77,6 @@ export default function Register() {
       if (data.exists) {
         setErrorMessage("Email or phone number already exists.");
       } else {
-        // Proceed to create the user account or handle success
         console.log("User is valid, proceed with registration.");
       }
     } catch (error) {

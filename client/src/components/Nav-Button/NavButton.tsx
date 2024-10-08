@@ -2,11 +2,11 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 interface NavButtonProps {
-  name: string; // Display name on the button
-  location: string; // URL or path to navigate to
-  className?: string; // Optional CSS class for custom styling
-  disabled?: boolean; // Optional disabled state for the button
-  ariaLabel?: string; // Optional aria-label for accessibility
+  name: string; 
+  location: string; 
+  className?: string; 
+  disabled?: boolean; 
+  ariaLabel?: string; 
 }
 
 const NavButton: React.FC<NavButtonProps> = ({
@@ -16,11 +16,11 @@ const NavButton: React.FC<NavButtonProps> = ({
   disabled = false,
   ariaLabel,
 }) => {
-  const navigate = useNavigate(); // React Router's hook for programmatic navigation
+  const navigate = useNavigate(); 
 
   const handleClick = () => {
     if (!disabled) {
-      navigate(location); // Navigate to the given location when button is clicked
+      navigate(location); 
     }
   };
 
