@@ -27,7 +27,7 @@ const NavButton: React.FC<NavButtonProps> = ({
   return (
     <button
       onClick={handleClick}
-      className={`nav-button ${className}`}
+      className={`nav-button ${className} font-Montserrat`}
       disabled={disabled}
       aria-label={ariaLabel || name}
     >

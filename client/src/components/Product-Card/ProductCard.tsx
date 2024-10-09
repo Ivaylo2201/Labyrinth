@@ -1,4 +1,4 @@
-import { Bath, Bed, BedDouble, Expand } from 'lucide-react';
+import { Bath, BedDouble, Expand } from 'lucide-react';
 import IconStat from './IconStat';
 
 type Address = {
