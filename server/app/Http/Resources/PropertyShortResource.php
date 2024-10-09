@@ -19,7 +19,7 @@ class PropertyShortResource extends JsonResource
             'status' => $this->status,
             'type' => $this->type,
             'address' => new AddressResource($this->address),
-            'price' => $this->price,
+            'price' => number_format($this->price, 0, '.', ','),
             'bathrooms' => $this->bathrooms,
             'bedrooms' => $this->bedrooms,
             'area' => $this->area,
