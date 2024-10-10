@@ -1,7 +1,7 @@
 import { Search } from 'lucide-react';
 import bg from '../../assets/hero.jpg';
 import { useState } from 'react';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom'
 
 type PropertyFilters = {
     status: string;
@@ -13,6 +13,7 @@ export default function Home() {
     const [selectedAction, setSelectedAction] = useState<string>('');
     const [selectedType, setSelectedType] = useState<string>('');
     const [location, setLocation] = useState<string>('');
+    const navigate = useNavigate();
 
     const handleActionSelectChange = (
         event: React.ChangeEvent<HTMLSelectElement>
@@ -43,14 +44,9 @@ export default function Home() {
             Object.entries(filters).filter(([_, value]) => value !== '')
         );
 
-        const propertiesUrl = new URL('http://127.0.0.1:8000/api/properties');
-        propertiesUrl.search = new URLSearchParams(truthyFilters).toString();
+        const queryParams = new URLSearchParams(truthyFilters).toString();
 
-        console.log(propertiesUrl.href);
-
-        // const response = await axios.get(propertiesUrl.href);
-
-        // navigate to properties page?
+        navigate(`/properties?${queryParams}`);
     };
 
     return (
@@ -73,7 +69,7 @@ export default function Home() {
                     <div className='relative'>
                         <select
                             onChange={handleActionSelectChange}
-                            className='h-8 w-full text-sm bg-transparent text-charcoal font-Montserrat appearance-none mx-2 pr-8 focus:outline-none'
+                            className='h-8 w-full pl-1 text-sm bg-transparent text-charcoal font-Montserrat appearance-none mx-2 pr-8 focus:outline-none'
                         >
                             <option value='' selected>
                                 Choose a action

@@ -7,7 +7,7 @@ type Address = {
     street: string;
 };
 
-type ProductCardProps = {
+export type PropertyCardProps = {
     id: number;
     status: string;
     type: string;
@@ -19,18 +19,15 @@ type ProductCardProps = {
     image: string;
 };
 
-function ProductCard(props: ProductCardProps): JSX.Element {
+function PropertyCard(props: PropertyCardProps): JSX.Element {
     const imageUrl: string = `http://127.0.0.1:8000/storage/${props.image}`;
     const isForRent: boolean = props.status === 'rent';
 
-    //temp
-    document.body.style.backgroundColor = '#edf2f6';
-
     return (
-        <article className='m-2 bg-white inline-flex flex-col overflow-hidden shadow-custom rounded-md '>
+        <article className='m-2 w-64 bg-white inline-flex flex-col overflow-hidden shadow-custom rounded-md '>
             <img
                 src={imageUrl}
-                className='w-64 object-contain'
+                className='h-48 object-cover'
                 alt='Property image'
             />
             <div className='font-Montserrat p-3 flex flex-col gap-1'>
@@ -40,7 +37,7 @@ function ProductCard(props: ProductCardProps): JSX.Element {
                 <h1 className='text-xl'>
                     {props.price}€ {isForRent ? ' / Month' : ''}
                 </h1>
-                <h1 className='text-light-charcoal'>
+                <h1 className='text-light-charcoal overflow-hidden text-ellipsis whitespace-nowrap'>
                     {props.address.city}, {props.address.street}
                 </h1>
             </div>
@@ -58,4 +55,4 @@ function ProductCard(props: ProductCardProps): JSX.Element {
     );
 }
 
-export default ProductCard;
+export default PropertyCard;
