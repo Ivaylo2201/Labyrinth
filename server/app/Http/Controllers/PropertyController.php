@@ -61,7 +61,7 @@ class PropertyController extends Controller
         }
 
         return response()->json(
-            PropertyResource::collection($query->get()),
+            PropertyShortResource::collection($query->get()),
             Response::HTTP_OK
         );
     }
@@ -98,7 +98,7 @@ class PropertyController extends Controller
             'bathrooms' => $data['bathrooms'],
             'bedrooms' => $data['bedrooms'],
             'area' => $data['area'],
-            'description' => $data['description'],
+            'description' => $data['description'] ?? 'No description provided.',
             'user_id' => $request->user()->id,
         ]);
 
