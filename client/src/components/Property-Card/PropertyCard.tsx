@@ -1,27 +1,13 @@
 import { Bath, BedDouble, Expand } from 'lucide-react';
 import IconStat from './IconStat';
+import { Property } from '../../types/Property';
+import { useNavigate } from 'react-router-dom';
+import formatThousands from '../../helpers/formatThousands';
 
-type Address = {
-    country: string;
-    city: string;
-    street: string;
-};
-
-export type PropertyCardProps = {
-    id: number;
-    status: string;
-    type: string;
-    address: Address;
-    price: string;
-    bathrooms: string;
-    bedrooms: string;
-    area: string;
-    image: string;
-};
-
-function PropertyCard(props: PropertyCardProps): JSX.Element {
+function PropertyCard(props: Property): JSX.Element {
     const imageUrl: string = `http://127.0.0.1:8000/storage/${props.image}`;
     const isForRent: boolean = props.status === 'rent';
+    const navigate = useNavigate();
 
     return (
         <article className='m-2 w-64 bg-white inline-flex flex-col overflow-hidden shadow-custom rounded-md '>
@@ -35,7 +21,7 @@ function PropertyCard(props: PropertyCardProps): JSX.Element {
                     {props.type}
                 </h1>
                 <h1 className='text-xl'>
-                    {props.price}€ {isForRent ? ' / Month' : ''}
+                    {formatThousands(props.price)}€ {isForRent ? ' / Month' : ''}
                 </h1>
                 <h1 className='text-light-charcoal overflow-hidden text-ellipsis whitespace-nowrap'>
                     {props.address.city}, {props.address.street}
@@ -47,7 +33,10 @@ function PropertyCard(props: PropertyCardProps): JSX.Element {
                 <IconStat LucideIcon={Expand} stat={`${props.area} sqm`} />
             </div>
             <div className='py-5 flex justify-center'>
-                <button className='font-Montserrat bg-charcoal hover:bg-light-charcoal duration-150 px-10 py-2 rounded-full text-white'>
+                <button
+                    onClick={() => navigate(`/property/${props.id}`)}
+                    className='font-Montserrat bg-charcoal hover:bg-light-charcoal duration-150 px-10 py-2 rounded-full text-white'
+                >
                     Details
                 </button>
             </div>

@@ -1,6 +1,6 @@
 type IconStatProps = {
     LucideIcon: React.ElementType;
-    stat: string;
+    stat: number | string;
 };
 
 function IconStat({ LucideIcon, stat }: IconStatProps) {

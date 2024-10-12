@@ -1,15 +1,15 @@
 import { useLocation } from 'react-router-dom';
-import useProperties from '../../../hooks/useProperties';
-import PropertyCard from '../../../components/Property-Card/PropertyCard';
+import useProperties from '../../hooks/useProperties';
+import PropertyCard from '../../components/Property-Card/PropertyCard';
 
 function PropertyList() {
     const location = useLocation();
-    const url = `http://127.0.0.1:8000/api/properties/search/${location.search}`;
+    const url = `properties/search/${location.search}`;
 
     const { data } = useProperties(url);
 
     return (
-        <div className='flex'>
+        <div className='flex flex-wrap'>
             {data?.map((p, index) => {
                 return (
                     <PropertyCard

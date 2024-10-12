@@ -6,7 +6,8 @@ import Register from '../pages/auth/Register/Register';
 import NoNavLayout from '../layouts/NoNavLayout';
 import DefaultLayout from '../layouts/DefaultLayout';
 import ProtectedRoute from './ProtectedRoutes';
-import PropertyList from '../pages/auth/PropertyList/PropertyList';
+import PropertyList from '../pages/PropertyList/PropertyList';
+import Property from '../pages/Property/Property';
 
 const RouterConfig: React.FC = () => {
     return (
@@ -36,6 +37,14 @@ const RouterConfig: React.FC = () => {
                 element={
                     <DefaultLayout>
                         <PropertyList />
+                    </DefaultLayout>
+                }
+            />
+            <Route
+                path='/property/:id'
+                element={
+                    <DefaultLayout>
+                        <Property />
                     </DefaultLayout>
                 }
             />
