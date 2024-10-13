@@ -4,7 +4,7 @@ import PropertyCard from '../../components/Property-Card/PropertyCard';
 
 function PropertyList() {
     const queryParams = useLocation().search;
-    const url = `properties/search/${queryParams}`;
+    const url = `/properties/search${queryParams}`;
 
     const { data: properties } = useProperties(url);
 

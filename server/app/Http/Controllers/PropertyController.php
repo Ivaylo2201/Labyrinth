@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\FilterHelper;
+use App\Helpers\ValidationHelper;
+use App\Rules\PropertyControllerRules;
 use App\Http\Resources\PropertyResource;
 use App\Http\Resources\PropertyShortResource;
 use App\Models\Address;
@@ -12,6 +15,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+
 
 class PropertyController extends Controller
 {
@@ -25,40 +29,31 @@ class PropertyController extends Controller
 
     public function search(Request $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'status' => 'string|in:buy,rent',
-            'type' => 'string|in:apartment,house,office,garage',
-            'location' => 'string',
-        ]);
+        $validator = Validator::make(
+            $request->all(), 
+            PropertyControllerRules::search()
+        );
 
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Validation failed.',
-                'errors' => $validator->errors()
-            ], Response::HTTP_BAD_REQUEST);
-        }
+        if ($validator->fails())
+            return ValidationHelper::invalidate($validator);
 
         $data = $validator->validated();
 
         $status = $data['status'] ?? null;
         $type = $data['type'] ?? null;
         $location = $data['location'] ?? null;
+        $column = $data['column'] ?? null;
+        $sort = $data['sort'] ?? 'asc';
 
-        $query = Property::with('address')->whereHas('address');
+        $query = FilterHelper::filter_by(
+            Property::with('address')->whereHas('address'),
+            $status,
+            $type,
+            $location
+        );
 
-        $query->when($status, function ($query, $status) {
-            return $query->where('status', $status);
-        })->when($type, function ($query, $type) {
-            return $query->where('type', $type);
-        });
-
-        if ($location) {
-            $query->whereHas('address', function ($query) use ($location) {
-                $query->where('country', 'LIKE', "%{$location}%")
-                    ->orWhere('city', 'LIKE', "%{$location}%")
-                    ->orWhere('street', 'LIKE', "%{$location}%");
-            });
-        }
+        if ($column)
+            $query->orderBy($column, $sort);
 
         return response()->json(
             PropertyShortResource::collection($query->get()),
@@ -68,26 +63,13 @@ class PropertyController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'status' => 'required|string|in:buy,rent',
-            'type' => 'required|string|in:apartment,house,office,garage',
-            'price' => 'required|numeric|min:1',
-            'bathrooms' => 'required|integer|min:1',
-            'bedrooms' => 'required|integer|min:1',
-            'area' => 'required|integer|min:1',
-            'description' => 'nullable|string',
-            'features' => 'required|array',
-            'images' => 'required|array',
-            'country' => 'required|string',
-            'city' => 'required|string',
-            'street' => 'required|string',
-        ]);
+        $validator = Validator::make(
+            $request->all(), 
+            PropertyControllerRules::store()
+        );
 
         if ($validator->fails())
-            return response()->json([
-                'message' => 'Validation failed.',
-                'errors' => $validator->errors()
-            ], Response::HTTP_BAD_REQUEST);
+            return ValidationHelper::invalidate($validator);
 
         $data = $validator->validated();
 
@@ -148,17 +130,10 @@ class PropertyController extends Controller
                 'message' => 'Property not found.'
             ], Response::HTTP_NOT_FOUND);
 
-        $validator = Validator::make($request->all(), [
-            'status' => 'string|in:buy,rent',
-            'price' => 'numeric|min:1',
-            'description' => 'nullable|string',
-        ]);
+        $validator = Validator::make($request->all(), PropertyControllerRules::update());
 
         if ($validator->fails())
-            return response()->json([
-                'message' => 'Validation failed.',
-                'errors' => $validator->errors()
-            ], Response::HTTP_BAD_REQUEST);
+            return ValidationHelper::invalidate($validator);
 
         if ($property->user_id !== $request->user()->id) {
             return response()->json([

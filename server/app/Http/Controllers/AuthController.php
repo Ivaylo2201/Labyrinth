@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ValidationHelper;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Rules\AuthControllerRules;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -29,19 +31,13 @@ class AuthController extends Controller
 
     public function sign_up(Request $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email|unique:users,email',
-            'username' => 'required|string|unique:users,username',
-            'password' => 'required|string|min:5|confirmed',
-            'phone_number' => ['required', 'string'],
-            'location' => 'nullable|string',
-        ]);
+        $validator = Validator::make(
+            $request->all(), 
+            AuthControllerRules::sign_up()
+        );
 
         if ($validator->fails())
-            return response()->json([
-                'message' => 'Validation failed.',
-                'errors' => $validator->errors()
-            ], Response::HTTP_BAD_REQUEST);
+            return ValidationHelper::invalidate($validator);
 
         $data = $validator->validated();
 
@@ -50,7 +46,7 @@ class AuthController extends Controller
             'username' => $data['username'],
             'password' => bcrypt($data['password']),
             'phone_number' => $data['phone_number'],
-            'location' => $data['location'] ?? null,
+            'location' => $data['location'] ?? 'Unknown',
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -70,18 +66,13 @@ class AuthController extends Controller
 
     public function reset(Request $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'phone_number' => 'required|string',
-            'password' => 'required|string|confirmed',
-        ]);
+        $validator = Validator::make(
+            $request->all(), 
+            AuthControllerRules::reset()
+        );
 
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Validation failed.',
-                'errors' => $validator->errors(),
-            ], Response::HTTP_BAD_REQUEST);
-        }
+        if ($validator->fails())
+            return ValidationHelper::invalidate($validator);
 
         $data = $validator->validated();
 

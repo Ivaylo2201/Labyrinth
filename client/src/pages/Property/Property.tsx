@@ -3,7 +3,7 @@ import useProperty from '../../hooks/useProperty';
 
 function Property() {
     const { id } = useParams();
-    const url: string = `/properties/${id}`;
+    const url = `/properties/${id}`;
 
     const { data: property } = useProperty(url);
 
@@ -12,7 +12,6 @@ function Property() {
         // return <Spinner />
     }
 
-    
     // Transform timestamp using:
     // new Date(property.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
     
