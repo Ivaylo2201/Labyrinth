@@ -11,16 +11,11 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    /*
-        {
-            "token": '8|gwZ8tQCfAoRDmLrEgBP4LoW82B2LsFiE5PThDEZV3ad198ad'
-        } 
-    */
     public function sign_in(Request $request): JsonResponse
     {
-        $user = User::where('email', $request->email)->firstOrFail();
+        $user = User::where('email', $request->email)->first();
 
-        if (!Hash::check($request->password, $user->password))
+        if (!$user || !Hash::check($request->password, $user->password))
             return response()->json([
                 'message' => 'Invalid credentials.'
             ], Response::HTTP_BAD_REQUEST);
@@ -32,12 +27,6 @@ class AuthController extends Controller
         ], Response::HTTP_OK);
     }
 
-    /*
-        {
-            "user": { "email": "test@gmail.com", ... },
-            "token": '8|gwZ8tQCfAoRDmLrEgBP4LoW82B2LsFiE5PThDEZV3ad198ad'
-        }
-    */
     public function sign_up(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [

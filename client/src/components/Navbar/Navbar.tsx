@@ -39,8 +39,8 @@ const Navbar = () => {
         </div>
 
         <div className="w-2/5 flex items-center gap-10 justify-center">
-          <NavButton name="For sale" location="/" className="primary-button" />
-          <NavButton name="For rent" location="/" className="primary-button" />
+          <NavButton name="For buy" location="/properties?status=buy" className="primary-button" />
+          <NavButton name="For rent" location="/properties?status=rent" className="primary-button" />
           <NavButton name="Contact us" location="/" className="primary-button" />
           <NavButton name="Blogs" location="/" className="primary-button" />
         </div>

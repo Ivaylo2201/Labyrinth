@@ -27,7 +27,7 @@ class PropertyController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'status' => 'string|in:buy,rent',
-            'type' => 'string|in:apartment,house',
+            'type' => 'string|in:apartment,house,office,garage',
             'location' => 'string',
         ]);
 
@@ -70,7 +70,7 @@ class PropertyController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'status' => 'required|string|in:buy,rent',
-            'type' => 'required|string|in:apartment,house',
+            'type' => 'required|string|in:apartment,house,office,garage',
             'price' => 'required|numeric|min:1',
             'bathrooms' => 'required|integer|min:1',
             'bedrooms' => 'required|integer|min:1',
