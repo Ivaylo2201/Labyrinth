@@ -8,6 +8,7 @@ import DefaultLayout from "../layouts/DefaultLayout";
 import ForgotPassword from "./../pages/auth/ForgotPassword/ForgotPassword";
 import ProtectedRoute from "./ProtectedRoutes";
 import PropertyList from "../pages/PropertyList/PropertyList";
+import Property from "../pages/Property/Property";
 
 const RouterConfig: React.FC = () => {
   return (
