@@ -5,9 +5,9 @@ import Login from "../pages/auth/Login/Login";
 import Register from "../pages/auth/Register/Register";
 import NoNavLayout from "../layouts/NoNavLayout";
 import DefaultLayout from "../layouts/DefaultLayout";
+import ForgotPassword from "./../pages/auth/ForgotPassword/ForgotPassword";
 import ProtectedRoute from "./ProtectedRoutes";
 import PropertyList from "../pages/PropertyList/PropertyList";
-import Property from "../pages/Property/Property";
 
 const RouterConfig: React.FC = () => {
   return (
@@ -55,6 +55,18 @@ const RouterConfig: React.FC = () => {
             element={
               <NoNavLayout>
                 <Register />
+              </NoNavLayout>
+            }
+          />
+        }
+      />
+      <Route
+        path="/forgot-password"
+        element={
+          <ProtectedRoute
+            element={
+              <NoNavLayout>
+                <ForgotPassword />
               </NoNavLayout>
             }
           />
