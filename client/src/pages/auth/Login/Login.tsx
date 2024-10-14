@@ -1,31 +1,66 @@
 import { Link, useNavigate } from "react-router-dom";
 import bg2 from "../../../assets/bg2.png";
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import { useAuth } from "../../../context/AuthContext";
+import axios from "axios";
 
 export default function Login() {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
+
+  const [emailIsValid, setEmailIsValid] = useState<null | boolean>(null);
+  const [passwordIsValid, setPasswordIsValid] = useState<null | boolean>(null);
+
+  const [errorMsg, setErrorMsg] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [serverMsg, setServerMsg] = useState("");
   const navigate = useNavigate();
 
-  const { login } = useAuth(); 
+  const { login } = useAuth();
+
+  let emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+  let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.{8,}).*$/;
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
     if (name === "email") {
       setEmailAddress(value);
+      setEmailIsValid(value ? emailRegex.test(value) : null);
     } else if (name === "password") {
+      setPasswordIsValid(value ? passwordRegex.test(value) : null);
       setPassword(value);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    setLoading(true);
     e.preventDefault();
-    await login(emailAddress, password, navigate);
-    setLoading(false);  
+    let msg: SetStateAction<string[]> = [];
+
+    if (!emailIsValid) {
+      msg.push("Please enter a valid email address!");
+    }
+    if (!passwordIsValid) {
+      msg.push(
+        "Password must be at least 8 characters, include 1 lowercase, 1 uppercase, and 1 digit."
+      );
+    }
+    setErrorMsg(msg);
+
+    if (msg.length) {
+      return; 
+    }
+
+    setLoading(true);
+    try {
+      
+      await login(emailAddress, password, navigate);
+      setServerMsg(""); 
+    } catch (error: any) {
+      setServerMsg(error.message); 
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -65,6 +100,17 @@ export default function Login() {
               className="text-xl font-bold text-white bg-[#212121] rounded-md p-2 w-44 hover:bg-[#393939] transition-colors duration-300 cursor-pointer"
             />
           </form>
+          <p className="text-red-600 text-sm mt-2">
+            {Array.isArray(errorMsg)
+              ? errorMsg.map((msg, index) => (
+                  <span key={index}>
+                    {msg}
+                    <br />
+                  </span>
+                ))
+              : errorMsg}
+          </p>
+          {serverMsg && <p className="text-red-600 text-sm mt-2">{serverMsg}</p>}
           <Link to="/forgot-password" className="text-md mt-3 font-light text-[#551a6e]">
             Forgot password?
           </Link>

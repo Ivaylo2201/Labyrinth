@@ -1,9 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import bg2 from "../../../assets/bg2.png";
 import { SetStateAction, useState } from "react";
-import axios from "axios";
+import { useAuth } from "../../../context/AuthContext";
 
 export default function Login() {
+  const { register } = useAuth(); 
   const [emailAddress, setEmailAddress] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -75,46 +76,16 @@ export default function Login() {
     } else {
       setLoading(true);
 
-      const payload = {
-        email: emailAddress,
-        username: username,
-        password: password,
-        password_confirmation: rePassword,
-        phone_number: phoneNumber,
-      };
-
-      console.log("Sending payload:", payload);
-
       try {
-        const response = await axios.post("http://localhost:8000/api/auth/signup/", payload, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (response.status === 200 || response.status === 201) {
-          console.log("Registration Successful:", response.data);
-          const data = response.data;
-          const token = data.token;
-          axios.defaults.headers.common["Authorization"] = ` Bearer ${token.split("|")[1]}`;
-          localStorage.setItem("user", JSON.stringify(data));
-          localStorage.setItem("token", token.split("|")[1]);
-          setLoading(false);
-          navigate("/");
-        } else {
-          console.error("Failed to register:", response.statusText);
-        }
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          setServerMsg(error.response?.data.errors);
-        } else {
-          console.error("Unexpected error:", error);
-        }
+        await register(emailAddress, username, password, phoneNumber, rePassword);
+        setLoading(false);
+        navigate("/"); 
+      } catch (error: any) {
+        setServerMsg(error.message);
+        setLoading(false);
       }
     }
-    setLoading(false);
   };
-
   return (
     <div className="relative w-full overflow-hidden h-screen">
       <div

@@ -5,6 +5,13 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (email: string, password: string, navigate: (path: string) => void) => Promise<void>;
   logout: () => Promise<void>;
+  register: (
+    email: string,
+    username: string,
+    password: string,
+    phoneNumber: string,
+    rePassword: string
+  ) => Promise<void>; // New register method
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -33,21 +40,63 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const data = response.data;
         const token = data.token;
 
-       
         axios.defaults.headers.common["Authorization"] = `Bearer ${token.split("|")[1]}`;
         localStorage.setItem("token", token.split("|")[1]);
 
-        
         setIsAuthenticated(true);
-        navigate("/"); 
+        navigate("/"); // Navigate on success
       } else {
-        console.error("Failed to log in:", response.statusText);
+        throw new Error(response.statusText); // Throw error if status is not successful
       }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error("Login error:", error.response?.data || error.message);
+    } catch (error: any) {
+      if (axios.isAxiosError(error) && error.response) {
+        const errorMessage = error.response.data?.message || "Login failed. Please try again.";
+        throw new Error(errorMessage); // Throw error upwards
       } else {
-        console.error("Unexpected error:", error);
+        throw new Error("An unexpected error occurred. Please try again."); // Generic error
+      }
+    }
+  };
+
+  const register = async (
+    email: string,
+    username: string,
+    password: string,
+    phoneNumber: string,
+    rePassword: string
+  ) => {
+    const payload = {
+      email,
+      username,
+      password,
+      password_confirmation: rePassword,
+      phone_number: phoneNumber,
+    };
+
+    try {
+      const response = await axios.post("http://localhost:8000/api/auth/signup/", payload, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.status === 200 || response.status === 201) {
+        const data = response.data;
+        const token = data.token;
+
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token.split("|")[1]}`;
+        localStorage.setItem("user", JSON.stringify(data));
+        localStorage.setItem("token", token.split("|")[1]);
+        setIsAuthenticated(true);
+        return data; // return the data if you need to use it
+      } else {
+        throw new Error(response.statusText);
+      }
+    } catch (error: any) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data.errors || "Registration failed. Please try again.");
+      } else {
+        throw new Error("An unexpected error occurred. Please try again.");
       }
     }
   };
@@ -70,8 +119,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       localStorage.removeItem("user");
       localStorage.removeItem("token");
-      setIsAuthenticated(false); 
-      console.log("Logged out successfully");
+      setIsAuthenticated(false);
     } catch (error) {
       setIsAuthenticated(false);
       localStorage.removeItem("user");
@@ -86,7 +134,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout, register }}>
       {children}
     </AuthContext.Provider>
   );
