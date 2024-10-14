@@ -4,7 +4,7 @@ import { SetStateAction, useState } from "react";
 import { useAuth } from "../../../context/AuthContext";
 
 export default function Login() {
-  const { register } = useAuth(); // Get register from AuthContext
+  const { register } = useAuth(); 
   const [emailAddress, setEmailAddress] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -79,7 +79,7 @@ export default function Login() {
       try {
         await register(emailAddress, username, password, phoneNumber, rePassword);
         setLoading(false);
-        navigate("/"); // Navigate after successful registration
+        navigate("/"); 
       } catch (error: any) {
         setServerMsg(error.message);
         setLoading(false);
