@@ -10,7 +10,8 @@ interface AuthContextType {
     username: string,
     password: string,
     phoneNumber: string,
-    rePassword: string
+    rePassword: string,
+    role: string
   ) => Promise<void>; // New register method
 }
 
@@ -44,16 +45,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.setItem("token", token.split("|")[1]);
 
         setIsAuthenticated(true);
-        navigate("/"); // Navigate on success
+        navigate("/");
       } else {
-        throw new Error(response.statusText); // Throw error if status is not successful
+        throw new Error(response.statusText);
       }
     } catch (error: any) {
       if (axios.isAxiosError(error) && error.response) {
         const errorMessage = error.response.data?.message || "Login failed. Please try again.";
-        throw new Error(errorMessage); // Throw error upwards
+        throw new Error(errorMessage);
       } else {
-        throw new Error("An unexpected error occurred. Please try again."); // Generic error
+        throw new Error("An unexpected error occurred. Please try again.");
       }
     }
   };
