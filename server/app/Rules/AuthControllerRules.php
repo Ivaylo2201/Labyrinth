@@ -12,6 +12,7 @@ class AuthControllerRules
             'password' => 'required|string|min:5|confirmed',
             'phone_number' => ['required', 'string'],
             'location' => 'nullable|string',
+            'role_id' => 'required|integer|exists:roles,id'
         ];
     }
 

@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
@@ -23,7 +24,7 @@ Route::prefix('/auth')->group(function () {
     Route::patch('/reset', [AuthController::class, 'reset']);
 });
 
-// protected routes
+// private routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/auth/signout', [AuthController::class, 'sign_out']);
     Route::prefix('/properties')->group(function () {
@@ -35,4 +36,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [UserController::class, 'index']);
         Route::delete('/delete', [UserController::class, 'destroy']);
     });
+});
+
+// admin routes
+Route::middleware([AdminMiddleware::class])->group(function () {
+
 });

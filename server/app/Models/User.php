@@ -17,6 +17,7 @@ class User extends Authenticatable
         'password',
         'phone_number',
         'location',
+        'role_id',
     ];
 
     protected $hidden = [
@@ -26,5 +27,14 @@ class User extends Authenticatable
     public function properties()
     {
         return $this->hasMany(Property::class);
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function isAdmin() {
+        return $this->role->name === 'admin';
     }
 }

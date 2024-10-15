@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ValidationHelper;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
@@ -47,12 +48,13 @@ class AuthController extends Controller
             'password' => bcrypt($data['password']),
             'phone_number' => $data['phone_number'],
             'location' => $data['location'] ?? 'Unknown',
+            'role_id' => $data['role_id']
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'user' => $user,
+            'user' => new UserResource($user),
             'token' => $token,
         ], Response::HTTP_CREATED);
     }
