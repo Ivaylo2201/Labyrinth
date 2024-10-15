@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Feature;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class FeatureSeeder extends Seeder
@@ -31,6 +30,6 @@ class FeatureSeeder extends Seeder
         foreach ($features as $feature) {
             Feature::create(['name' => $feature]);
         }
-        
+
     }
 }
