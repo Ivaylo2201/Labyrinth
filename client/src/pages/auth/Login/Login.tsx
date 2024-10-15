@@ -1,5 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import bg2 from "../../../assets/bg2.png";
+import bgForm from "../../../assets/signImage.jpg";
+import logo from "../../../assets/logo.png";
+
 import { SetStateAction, useState } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import axios from "axios";
@@ -38,26 +41,25 @@ export default function Login() {
     let msg: SetStateAction<string[]> = [];
 
     if (!emailIsValid) {
-      msg.push("Please enter a valid email address!");
+      setEmailIsValid(false);
     }
     if (!passwordIsValid) {
-      msg.push(
-        "Password must be at least 8 characters, include 1 lowercase, 1 uppercase, and 1 digit."
-      );
+      setPasswordIsValid(false);
     }
     setErrorMsg(msg);
 
-    if (msg.length) {
-      return; 
+    if (!(emailIsValid && passwordIsValid)) {
+      return;
     }
 
     setLoading(true);
     try {
-      
       await login(emailAddress, password, navigate);
-      setServerMsg(""); 
+      setServerMsg("");
     } catch (error: any) {
-      setServerMsg(error.message); 
+      console.log(error);
+
+      setServerMsg(error.message);
     } finally {
       setLoading(false);
     }
@@ -72,54 +74,76 @@ export default function Login() {
       <div className="absolute inset-0 bg-black bg-opacity-20 backdrop-blur-sm"></div>
 
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-72  h-min backdrop-blur-md bg-[#E0E0E0]  bg-opacity-60 p-4 rounded-lg flex justify-center text-center flex-col">
-          <h2 className="text-3xl text-center pb-8">Login</h2>
-          <form onSubmit={handleSubmit} className="flex justify-center flex-col items-center">
-            <input
-              type="text"
-              name="email"
-              value={emailAddress}
-              onChange={onChange}
-              id="email"
-              placeholder="Email..."
-              style={{ backgroundColor: "rgba(0, 0, 0, 0.0)" }}
-              className={`bg-transparent p-1 w-full text-md font-thin text-black border-b-2 border-black placeholder-black mb-5 focus:outline-none -webkit-autofill-bg-transparent focus:scale-105`}
-            />
-            <input
-              type="password"
-              name="password"
-              value={password}
-              onChange={onChange}
-              id="password"
-              placeholder="Password..."
-              className={`bg-transparent p-1 w-full text-md font-thin text-black border-b-2 border-black placeholder-black mb-5 focus:outline-none focus:scale-105`}
-            />
-            <input
-              type="submit"
-              value="Sign in"
-              className="text-xl font-bold text-white bg-[#212121] rounded-md p-2 w-44 hover:bg-[#393939] transition-colors duration-300 cursor-pointer"
-            />
-          </form>
-          <p className="text-red-600 text-sm mt-2">
-            {Array.isArray(errorMsg)
-              ? errorMsg.map((msg, index) => (
-                  <span key={index}>
-                    {msg}
-                    <br />
-                  </span>
-                ))
-              : errorMsg}
-          </p>
-          {serverMsg && <p className="text-red-600 text-sm mt-2">{serverMsg}</p>}
-          <Link to="/forgot-password" className="text-md mt-3 font-light text-[#551a6e]">
-            Forgot password?
-          </Link>
-          <p className="text-md mt-3 font-light ">
-            Don't have an account?{" "}
-            <Link to="/register" className="text-[#551a6e]">
-              Sign up
+        <div className="w-3/5  backdrop-blur-md bg-[#E0E0E0]  bg-opacity-60 rounded-lg flex justify-center text-center flex-row">
+          <div className="w-1/2 bg-white flex flex-col items-center">
+            <h1 className="text-2xl font-semibold uppercase tracking-wide pt-10 pb-2">Welcome</h1>
+            <img src={logo} alt="logo" className="w-36 h-36" />
+            <p className="pb-4">Don't have an account?</p>
+            <Link
+              to="/register"
+              className="text-md  font-semibold text-black border-black border-2
+            px-2 rounded-full hover:text-white hover:bg-black transition-all duration-300"
+            >
+              Create an account
             </Link>
-          </p>
+          </div>
+          <div
+            className="w-1/2 relative inset-0 bg-cover bg-center p-4"
+            style={{ backgroundImage: `url(${bgForm})` }}
+          >
+            <h2 className="text-3xl text-center pt-8 pb-5 text-white font-semibold -tracking-tighter ">
+              Login
+            </h2>
+            <form
+              onSubmit={handleSubmit}
+              className="flex justify-center flex-col items-center gap-5 pb-5 pt-4"
+            >
+              <input
+                type="text"
+                name="email"
+                value={emailAddress}
+                onChange={onChange}
+                id="email"
+                placeholder="Email..."
+                className={`px-2 py-1 text-sm w-full ${
+                  emailIsValid === false ? "shadow-red-500 shadow-xl" : ""
+                } ${emailIsValid === null || emailIsValid === true ? "" : ""}`}
+              />
+              <input
+                type="password"
+                name="password"
+                value={password}
+                onChange={onChange}
+                id="password"
+                placeholder="Password..."
+                className={`px-2 py-1 text-sm w-full ${
+                  passwordIsValid === false ? "shadow-red-500 shadow-xl" : ""
+                } ${passwordIsValid === null || passwordIsValid === true ? "" : ""}`}
+              />
+
+              <span className="flex items-center justify-between w-full">
+                <input
+                  type="submit"
+                  value="Login"
+                  className="text-white px-4 border-white border-2 rounded-full  hover:bg-white hover:text-black transition-all duration-300 cur"
+                />
+                <Link to="/forgot-password" className="text-md  font-light text-white">
+                  Forgot password?
+                </Link>
+              </span>
+              <p className="text-red-400 text-sm mt-2">
+                {Array.isArray(errorMsg)
+                  ? errorMsg.map((msg, index) => (
+                      <span key={index}>
+                        {msg}
+                        <br />
+                      </span>
+                    ))
+                  : errorMsg}
+              </p>
+              {serverMsg && <p className="text-red-400 text-sm mt-2">{serverMsg}</p>}
+            </form>
+          </div>
         </div>
       </div>
       {loading && (

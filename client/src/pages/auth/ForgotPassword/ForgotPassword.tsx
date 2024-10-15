@@ -1,6 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import bg2 from "../../../assets/bg2.png";
 import { useState } from "react";
+import bgForm from "../../../assets/signImage.jpg";
+import logo from "../../../assets/logo.png";
 import axios, { AxiosError } from "axios";
 
 export default function Register() {
@@ -97,61 +99,86 @@ export default function Register() {
       <div className="absolute inset-0 bg-black bg-opacity-20 backdrop-blur-sm"></div>
 
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-96 h-min backdrop-blur-md bg-[#E0E0E0] bg-opacity-60 rounded-lg flex justify-center text-center flex-col px-4 py-4">
-          <h2 className="text-3xl text-center pb-4 font-['Roboto'] ">Forgot Password</h2>
-          <p className="mt-1 mb-2">
-            Remember your password?{" "}
-            <Link to="/login" className="text-md font-light text-[#551a6e]">
-              Login here
+        <div className="w-3/5  backdrop-blur-md bg-[#E0E0E0]  bg-opacity-60 rounded-lg flex justify-center text-center flex-row">
+          <div className="w-1/2 bg-white flex flex-col items-center">
+            <h1 className="text-2xl font-semibold uppercase tracking-wide pt-10 pb-2">Welcome</h1>
+            <img src={logo} alt="logo" className="w-36 h-36" />
+            <p className="pb-4">Remember your password?</p>
+            <Link
+              to="/login"
+              className="text-md  font-semibold text-black border-black border-2
+            px-2 rounded-full hover:text-white hover:bg-black transition-all duration-300"
+            >
+              Sign in
             </Link>
-          </p>
+          </div>
+          <div
+            className="w-1/2 relative inset-0 bg-cover bg-center p-4"
+            style={{ backgroundImage: `url(${bgForm})` }}
+          >
+            <h2 className="text-3xl text-center pt-8 pb-5 text-white font-semibold -tracking-tighter ">
+              Forgot password
+            </h2>
+            <form
+              onSubmit={handleSubmit}
+              className="flex justify-center flex-col items-center gap-5 pb-10 pt-4"
+            >
+              <input
+                type="text"
+                name="email"
+                value={emailAddress}
+                onChange={onChange}
+                id="email"
+                placeholder="Email..."
+                className="px-2 py-1 text-sm w-full"
+              />
+              <input
+                type="text"
+                name="phoneNumber"
+                value={phoneNumber}
+                onChange={onChange}
+                id="phoneNumber"
+                placeholder="Phone number"
+                className="px-2 py-1 text-sm w-full"
+              />
+              <input
+                type="password"
+                name="password"
+                value={password}
+                onChange={onChange}
+                id="password"
+                placeholder="New password"
+                className="px-2 py-1 text-sm w-full"
+              />
+              <input
+                type="password"
+                name="rePassword"
+                value={rePassword}
+                onChange={onChange}
+                id="rePassword"
+                placeholder="Confirm password"
+                className="px-2 py-1 text-sm w-full"
+              />
 
-          <form onSubmit={handleSubmit} className="flex justify-center flex-col items-center">
-            <input
-              type="text"
-              name="email"
-              value={emailAddress}
-              onChange={onChange}
-              id="email"
-              placeholder="Email..."
-              className={`bg-transparent p-1 w-9/12 text-md font-thin text-black border-b-2 border-black placeholder-black mb-5 focus:outline-none focus:scale-105`}
-            />
-            <input
-              type="text"
-              name="phone"
-              value={phoneNumber}
-              onChange={onChange}
-              id="phone"
-              placeholder="Phone number..."
-              className={`bg-transparent p-1 w-9/12 text-md font-thin text-black border-b-2 border-black placeholder-black mb-5 focus:outline-none focus:scale-105`}
-            />
-            <input
-              type="password"
-              name="password"
-              value={password}
-              onChange={onChange}
-              id="password"
-              placeholder="New password..."
-              className={`bg-transparent p-1 w-9/12 text-md font-thin text-black border-b-2 border-black placeholder-black mb-5 focus:outline-none focus:scale-105`}
-            />
-            <input
-              type="password"
-              name="rePassword"
-              value={rePassword}
-              onChange={onChange}
-              id="rePassword"
-              placeholder="Confirm new password..."
-              className={`bg-transparent p-1 w-9/12 text-md font-thin text-black border-b-2 border-black placeholder-black mb-5 focus:outline-none focus:scale-105`}
-            />
-            <p id="errorMsg" className="text-red-500 mb-5">
-              {errorMessage}
-            </p>
-            <input
-              type="submit"
-              value="Change password"
-              className="text-xl font-bold text-white bg-[#212121] rounded-md p-2 hover:bg-[#393939] transition-colors duration-300 cursor-pointer"
-            />
-          </form>
+              <input
+                type="submit"
+                value="Reset"
+                className="text-white px-4 border-white border-2 rounded-full  hover:bg-white hover:text-black transition-all duration-300 cur"
+              />
+
+              <p className="text-red-400 text-sm mt-2">
+                {Array.isArray(errorMessage)
+                  ? errorMessage.map((msg, index) => (
+                      <span key={index}>
+                        {msg}
+                        <br />
+                      </span>
+                    ))
+                  : errorMessage}
+              </p>
+              {/* {serverMsg && <p className="text-red-400 text-sm mt-2">{serverMsg}</p>} */}
+            </form>
+          </div>
         </div>
       </div>
       {loading && (
