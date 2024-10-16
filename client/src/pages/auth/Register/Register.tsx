@@ -5,6 +5,7 @@ import logo from "../../../assets/logo.png";
 
 import { SetStateAction, useState } from "react";
 import { useAuth } from "../../../context/AuthContext";
+import axios from "axios";
 
 export default function Login() {
   const { register } = useAuth();
@@ -13,7 +14,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [rePassword, setRePassword] = useState("");
-  const [role, setRole] = useState("");
+  const [roleId, setRoleId] = useState(-1);
 
   const [emailIsValid, setEmailIsValid] = useState<null | boolean>(null);
   const [usernameIsValid, setUsernameIsValid] = useState<null | boolean>(null);
@@ -23,12 +24,12 @@ export default function Login() {
   const [roleIsValid, setRoleIsValid] = useState<null | boolean>(null);
 
   const [errorMsg, setErrorMsg] = useState<string[]>([]);
-  const [serverMsg, setServerMsg] = useState("");
+  const [serverMsg, setServerMsg] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   let emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-  let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.{8,}).*$/;
+  // let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.{8,}).*$/;
   let phoneNumberRegex = /^(((\+|00)359[- ]?)|(0))(8[- ]?[789]([- ]?\d){7})$/gm;
 
   const onChangeInputs = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,7 +43,8 @@ export default function Login() {
       setUsernameIsValid(value ? value.length > 4 : null);
     } else if (name === "password") {
       setPassword(value);
-      setPasswordIsValid(value ? passwordRegex.test(value) : null);
+      // setPasswordIsValid(value ? passwordRegex.test(value) : null);
+      setPasswordIsValid(value.length >= 8 ? true : false);
       setRePasswordIsValid(rePassword ? value === rePassword : null);
     } else if (name === "rePassword") {
       setRePassword(value);
@@ -53,19 +55,18 @@ export default function Login() {
     }
   };
   const onSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    if (value) {
-      setRole(value);
-    } else {
-      setRole("");
-    }
+    const { value } = e.target;
+    setRoleId(parseInt(value));
+    setRoleIsValid(parseInt(value) > 0 ? true : false);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    setServerMsg("");
+    setServerMsg([]);
     setErrorMsg([]);
     e.preventDefault();
-    let msg: SetStateAction<string[]> = [];
+
+    let msg: string[] = [];
+
     if (!emailIsValid) {
       setEmailIsValid(false);
     }
@@ -81,11 +82,12 @@ export default function Login() {
     if (!phoneNumberIsValid) {
       setPhoneNumberIsValid(false);
     }
-    if (role === "") {
+    if (roleId < -99) {
       setRoleIsValid(false);
     } else {
       setRoleIsValid(true);
     }
+
     if (
       !(
         emailIsValid &&
@@ -96,25 +98,53 @@ export default function Login() {
         roleIsValid
       )
     ) {
-      // msg.push("Please enter valid data!");
+      const payload = {
+        email: emailAddress,
+        username,
+        password,
+        password_confirmation: rePassword,
+        phone_number: phoneNumber,
+        role_id: roleId,
+      };
+      const payloadIsValid = {
+        email: emailIsValid,
+        username: usernameIsValid,
+        password: passwordIsValid,
+        re_password: rePasswordIsValid,
+        phoneNumber: phoneNumberIsValid,
+        roleId: roleIsValid,
+      };
+      console.log(payloadIsValid);
+      msg.push("Please enter valid data!");
+      setErrorMsg(msg);
       return;
     }
-    setErrorMsg(msg);
-    if (msg.length) {
-      return;
-    } else {
-      setLoading(true);
 
-      try {
-        await register(emailAddress, username, password, phoneNumber, rePassword, role);
-        setLoading(false);
-        navigate("/");
-      } catch (error: any) {
-        setServerMsg(error.message);
-        setLoading(false);
+    setLoading(true);
+
+    try {
+      await register(emailAddress, username, password, phoneNumber, rePassword, roleId);
+      setLoading(false);
+      navigate("/");
+    } catch (error: any) {
+      setLoading(false);
+
+      let errorMessages: string[] = [];
+
+      if (typeof error === "object") {
+        for (const key in error) {
+          if (error.hasOwnProperty(key)) {
+            errorMessages.push(`${error[key]}`);
+          }
+        }
+      } else {
+        errorMessages.push("An error occurred during registration.");
       }
+
+      setServerMsg(errorMessages);
     }
   };
+
   return (
     <div className="relative w-full overflow-hidden h-screen">
       <div
@@ -124,7 +154,7 @@ export default function Login() {
       <div className="absolute inset-0 bg-black bg-opacity-20 backdrop-blur-sm"></div>
 
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-3/5  h-2/4 backdrop-blur-md bg-[#E0E0E0]  bg-opacity-60 rounded-lg flex justify-center text-center flex-row">
+        <div className="w-3/5  backdrop-blur-md bg-[#E0E0E0]  bg-opacity-60 rounded-lg flex justify-center text-center flex-row">
           <div className="w-1/2  bg-white flex flex-col items-center">
             <h1 className="text-2xl font-semibold uppercase tracking-wide pt-10 pb-2">Welcome</h1>
             <img src={logo} alt="logo" className="w-36 h-36" />
@@ -216,11 +246,11 @@ export default function Login() {
                 } ${roleIsValid === null || roleIsValid === true ? "" : ""}`}
                 onChange={onSelectChange}
               >
-                <option value="" selected>
+                <option value="-99" selected>
                   Choose a role
                 </option>
-                <option value="company">Company</option>
-                <option value="user">User</option>
+                <option value="1">Company</option>
+                <option value="2">User</option>
               </select>
               <span>
                 <input
@@ -228,14 +258,6 @@ export default function Login() {
                   value="Register"
                   className="text-white px-4 border-white border-2 rounded-full  hover:bg-white hover:text-black transition-all duration-300"
                 />
-
-                {/* <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                  <strong class="font-bold">Holy smokes!</strong>
-                  <span class="block sm:inline">Something seriously bad happened.</span>
-                  <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
-                  <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
-                  </span>
-                </div> */}
 
                 <p className="text-red-400 text-sm ">
                   {Array.isArray(errorMsg)
@@ -247,7 +269,13 @@ export default function Login() {
                       ))
                     : errorMsg}
                 </p>
-                {serverMsg && <p className="text-red-400 text-sm">{serverMsg}</p>}
+                {serverMsg.length > 0 && (
+                  <div className="text-red-400 text-sm">
+                    {serverMsg.map((msg, index) => (
+                      <p key={index}>{msg}</p>
+                    ))}
+                  </div>
+                )}
               </span>
             </form>
           </div>

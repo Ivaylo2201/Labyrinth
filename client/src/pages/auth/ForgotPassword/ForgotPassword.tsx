@@ -34,7 +34,7 @@ export default function Register() {
       setPhoneIsValid(phoneRegex.test(value));
     } else if (name === "password") {
       setPassword(value);
-      setPasswordIsValid(passwordRegex.test(value));
+      setPasswordIsValid(value.length >= 8);
       setRePasswordIsValid(rePassword === value);
     } else if (name === "rePassword") {
       setRePassword(value);
@@ -134,10 +134,10 @@ export default function Register() {
               />
               <input
                 type="text"
-                name="phoneNumber"
+                name="phone"
                 value={phoneNumber}
                 onChange={onChange}
-                id="phoneNumber"
+                id="phone"
                 placeholder="Phone number"
                 className="px-2 py-1 text-sm w-full"
               />
