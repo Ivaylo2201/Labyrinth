@@ -23,7 +23,6 @@ export default function Login() {
   const [phoneNumberIsValid, setPhoneNumberIsValid] = useState<null | boolean>(null);
   const [roleIsValid, setRoleIsValid] = useState<null | boolean>(null);
 
-  const [errorMsg, setErrorMsg] = useState<string[]>([]);
   const [serverMsg, setServerMsg] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -62,31 +61,9 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setServerMsg([]);
-    setErrorMsg([]);
     e.preventDefault();
 
     let msg: string[] = [];
-
-    if (!emailIsValid) {
-      setEmailIsValid(false);
-    }
-    if (!usernameIsValid) {
-      setUsernameIsValid(false);
-    }
-    if (!passwordIsValid) {
-      setPasswordIsValid(false);
-    }
-    if (!rePasswordIsValid) {
-      setRePasswordIsValid(false);
-    }
-    if (!phoneNumberIsValid) {
-      setPhoneNumberIsValid(false);
-    }
-    if (roleId < -99) {
-      setRoleIsValid(false);
-    } else {
-      setRoleIsValid(true);
-    }
 
     if (
       !(
@@ -98,25 +75,8 @@ export default function Login() {
         roleIsValid
       )
     ) {
-      const payload = {
-        email: emailAddress,
-        username,
-        password,
-        password_confirmation: rePassword,
-        phone_number: phoneNumber,
-        role_id: roleId,
-      };
-      const payloadIsValid = {
-        email: emailIsValid,
-        username: usernameIsValid,
-        password: passwordIsValid,
-        re_password: rePasswordIsValid,
-        phoneNumber: phoneNumberIsValid,
-        roleId: roleIsValid,
-      };
-      console.log(payloadIsValid);
       msg.push("Please enter valid data!");
-      setErrorMsg(msg);
+      setServerMsg(msg);
       return;
     }
 
@@ -140,7 +100,6 @@ export default function Login() {
       } else {
         errorMessages.push("An error occurred during registration.");
       }
-
       setServerMsg(errorMessages);
     }
   };
@@ -258,17 +217,6 @@ export default function Login() {
                   value="Register"
                   className="text-white px-4 border-white border-2 rounded-full  hover:bg-white hover:text-black transition-all duration-300"
                 />
-
-                <p className="text-red-400 text-sm ">
-                  {Array.isArray(errorMsg)
-                    ? errorMsg.map((msg, index) => (
-                        <span key={index}>
-                          {msg}
-                          <br />
-                        </span>
-                      ))
-                    : errorMsg}
-                </p>
                 {serverMsg.length > 0 && (
                   <div className="text-red-400 text-sm">
                     {serverMsg.map((msg, index) => (

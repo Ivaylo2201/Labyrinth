@@ -32,7 +32,6 @@ export default function Login() {
       setEmailIsValid(value ? emailRegex.test(value) : null);
     } else if (name === "password") {
       setPasswordIsValid(value.length >= 8 ? true : false);
-      // setPasswordIsValid(value ? passwordRegex.test(value) : null);
       setPassword(value);
     }
   };
@@ -40,13 +39,6 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     let msg: SetStateAction<string[]> = [];
-
-    if (!emailIsValid) {
-      setEmailIsValid(false);
-    }
-    if (!passwordIsValid) {
-      setPasswordIsValid(false);
-    }
     setErrorMsg(msg);
 
     if (!(emailIsValid && passwordIsValid)) {
@@ -58,8 +50,6 @@ export default function Login() {
       await login(emailAddress, password, navigate);
       setServerMsg("");
     } catch (error: any) {
-      console.log(error);
-
       setServerMsg(error.message);
     } finally {
       setLoading(false);

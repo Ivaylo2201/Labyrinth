@@ -20,7 +20,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   let emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-  let phoneRegex = /^(?:\+359|0)\d{9}$/; // Bulgarian phone number format
+  let phoneRegex = /^(?:\+359|0)\d{9}$/;
   let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.{8,}).*$/;
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,25 +45,7 @@ export default function Register() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!emailIsValid) {
-      setErrorMessage("Please enter a valid email address.");
-      return;
-    }
-
-    if (!phoneValid) {
-      setErrorMessage("Please enter a valid phone number.");
-      return;
-    }
-
-    if (!passwordIsValid) {
-      setErrorMessage(
-        "Password must be at least 8 characters, include 1 lowercase, 1 uppercase, and 1 number."
-      );
-      return;
-    }
-
-    if (!rePasswordIsValid) {
-      setErrorMessage("Passwords do not match.");
+    if (!(emailIsValid && phoneValid && passwordIsValid && rePasswordIsValid)) {
       return;
     }
 
@@ -129,8 +111,10 @@ export default function Register() {
                 value={emailAddress}
                 onChange={onChange}
                 id="email"
-                placeholder="Email..."
-                className="px-2 py-1 text-sm w-full"
+                placeholder="Email"
+                className={`px-2 py-1 text-sm w-full ${
+                  emailIsValid === false ? "shadow-red-500 shadow-xl" : ""
+                } ${emailIsValid === null || emailIsValid === true ? "" : ""}`}
               />
               <input
                 type="text"
@@ -139,7 +123,9 @@ export default function Register() {
                 onChange={onChange}
                 id="phone"
                 placeholder="Phone number"
-                className="px-2 py-1 text-sm w-full"
+                className={`px-2 py-1 text-sm w-full ${
+                  phoneValid === false ? "shadow-red-500 shadow-xl" : ""
+                } ${phoneValid === null || phoneValid === true ? "" : ""}`}
               />
               <input
                 type="password"
@@ -148,7 +134,9 @@ export default function Register() {
                 onChange={onChange}
                 id="password"
                 placeholder="New password"
-                className="px-2 py-1 text-sm w-full"
+                className={`px-2 py-1 text-sm w-full ${
+                  passwordIsValid === false ? "shadow-red-500 shadow-xl" : ""
+                } ${passwordIsValid === null || passwordIsValid === true ? "" : ""}`}
               />
               <input
                 type="password"
@@ -157,7 +145,9 @@ export default function Register() {
                 onChange={onChange}
                 id="rePassword"
                 placeholder="Confirm password"
-                className="px-2 py-1 text-sm w-full"
+                className={`px-2 py-1 text-sm w-full ${
+                  rePasswordIsValid === false ? "shadow-red-500 shadow-xl" : ""
+                } ${rePasswordIsValid === null || rePasswordIsValid === true ? "" : ""}`}
               />
 
               <input
@@ -176,7 +166,6 @@ export default function Register() {
                     ))
                   : errorMessage}
               </p>
-              {/* {serverMsg && <p className="text-red-400 text-sm mt-2">{serverMsg}</p>} */}
             </form>
           </div>
         </div>
