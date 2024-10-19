@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
+import { Axios } from "../helpers/http";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -11,8 +12,8 @@ interface AuthContextType {
     password: string,
     phoneNumber: string,
     rePassword: string,
-    role: string
-  ) => Promise<void>; // New register method
+    role_id: number
+  ) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -31,7 +32,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const payload = { email, password };
 
     try {
-      const response = await axios.post("http://localhost:8000/api/auth/signin", payload, {
+      const response = await Axios.post("/auth/signin", payload, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -64,7 +65,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     username: string,
     password: string,
     phoneNumber: string,
-    rePassword: string
+    rePassword: string,
+    role_id: number
   ) => {
     const payload = {
       email,
@@ -72,10 +74,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       password,
       password_confirmation: rePassword,
       phone_number: phoneNumber,
+      role_id,
     };
 
     try {
-      const response = await axios.post("http://localhost:8000/api/auth/signup/", payload, {
+      const response = await Axios.post("/auth/signup/", payload, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -89,15 +92,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.setItem("user", JSON.stringify(data));
         localStorage.setItem("token", token.split("|")[1]);
         setIsAuthenticated(true);
-        return data; // return the data if you need to use it
-      } else {
-        throw new Error(response.statusText);
+        return data;
       }
     } catch (error: any) {
-      if (axios.isAxiosError(error)) {
-        throw new Error(error.response?.data.errors || "Registration failed. Please try again.");
+      if (error.response && error.response.data) {
+        const errors = error.response.data.errors;
+        throw errors;
       } else {
-        throw new Error("An unexpected error occurred. Please try again.");
+        throw new Error("An unknown error occurred.");
       }
     }
   };
@@ -111,7 +113,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
 
-      await axios.delete("http://localhost:8000/api/auth/signout", {
+      await Axios.delete("/auth/signout", {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

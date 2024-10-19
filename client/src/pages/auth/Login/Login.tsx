@@ -22,7 +22,7 @@ export default function Login() {
   const { login } = useAuth();
 
   let emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-  let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.{8,}).*$/;
+  // let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.{8,}).*$/;
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -31,7 +31,7 @@ export default function Login() {
       setEmailAddress(value);
       setEmailIsValid(value ? emailRegex.test(value) : null);
     } else if (name === "password") {
-      setPasswordIsValid(value ? passwordRegex.test(value) : null);
+      setPasswordIsValid(value.length >= 8 ? true : false);
       setPassword(value);
     }
   };
@@ -39,13 +39,6 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     let msg: SetStateAction<string[]> = [];
-
-    if (!emailIsValid) {
-      setEmailIsValid(false);
-    }
-    if (!passwordIsValid) {
-      setPasswordIsValid(false);
-    }
     setErrorMsg(msg);
 
     if (!(emailIsValid && passwordIsValid)) {
@@ -57,8 +50,6 @@ export default function Login() {
       await login(emailAddress, password, navigate);
       setServerMsg("");
     } catch (error: any) {
-      console.log(error);
-
       setServerMsg(error.message);
     } finally {
       setLoading(false);
@@ -104,7 +95,7 @@ export default function Login() {
                 value={emailAddress}
                 onChange={onChange}
                 id="email"
-                placeholder="Email..."
+                placeholder="Email"
                 className={`px-2 py-1 text-sm w-full ${
                   emailIsValid === false ? "shadow-red-500 shadow-xl" : ""
                 } ${emailIsValid === null || emailIsValid === true ? "" : ""}`}
@@ -115,7 +106,7 @@ export default function Login() {
                 value={password}
                 onChange={onChange}
                 id="password"
-                placeholder="Password..."
+                placeholder="Password"
                 className={`px-2 py-1 text-sm w-full ${
                   passwordIsValid === false ? "shadow-red-500 shadow-xl" : ""
                 } ${passwordIsValid === null || passwordIsValid === true ? "" : ""}`}
