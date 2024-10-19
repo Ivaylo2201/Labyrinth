@@ -150,13 +150,14 @@ class PropertyController extends Controller
     public function destroy(Request $request, int $id): JsonResponse
     {
         $property = Property::find($id);
+        $user = $request->user();
 
         if (!$property)
             return response()->json([
                 'message' => 'Property not found.'
             ], Response::HTTP_NOT_FOUND);
 
-        if ($property->user_id !== $request->user()->id) {
+        if ($property->user_id !== $request->user()->id && $user->role->name !== 'admin') {
             return response()->json([
                 'message' => 'User does not own the property.'
             ], Response::HTTP_FORBIDDEN);

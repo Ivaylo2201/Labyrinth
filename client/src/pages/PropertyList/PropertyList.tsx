@@ -1,6 +1,7 @@
 import { useLocation } from 'react-router-dom';
 import useProperties from '../../hooks/useProperties';
 import PropertyCard from '../../components/Property-Card/PropertyCard';
+import ClipLoader from 'react-spinners/ClipLoader';
 
 function PropertyList() {
     const queryParams = useLocation().search;
@@ -9,8 +10,7 @@ function PropertyList() {
     const { data: properties } = useProperties(url);
 
     if (properties === undefined) {
-        return <p>Loading...</p>;
-        // return <Spinner />
+        return <ClipLoader size={50} color={"#333333"} />
     }
 
     return (

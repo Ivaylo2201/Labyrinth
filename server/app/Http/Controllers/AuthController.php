@@ -34,7 +34,10 @@ class AuthController extends Controller
     {
         $validator = Validator::make(
             $request->all(), 
-            AuthControllerRules::sign_up()
+            AuthControllerRules::sign_up(),
+            [
+                'role_id.required' => 'The role field is required.'
+            ]
         );
 
         if ($validator->fails())

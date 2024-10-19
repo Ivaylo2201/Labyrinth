@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\PropertyController;
@@ -40,5 +41,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // admin routes
 Route::middleware([AdminMiddleware::class])->group(function () {
-
+    Route::prefix('/admin')->group(function () {
+        Route::prefix('/users')->group(function () {
+            Route::get('/', [AdminController::class, 'users']);
+            Route::delete('/{id}', [AdminController::class, 'destroy_user']);
+        });
+        Route::prefix('/properties')->group(function () {
+            Route::get('/', [AdminController::class, 'properties']);
+            Route::delete('/{id}', [AdminController::class, 'destroy_property']);
+        });
+    });
 });

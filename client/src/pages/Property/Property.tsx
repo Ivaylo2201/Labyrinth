@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom';
 import useProperty from '../../hooks/useProperty';
+import ClipLoader from 'react-spinners/ClipLoader';
 
 function Property() {
     const { id } = useParams();
@@ -8,8 +9,7 @@ function Property() {
     const { data: property } = useProperty(url);
 
     if (property === undefined) {
-        return <p>Loading...</p>;
-        // return <Spinner />
+        return <ClipLoader size={50} color={"#333333"} />
     }
 
     // Transform timestamp using:

@@ -10,7 +10,7 @@ class AuthControllerRules
             'email' => 'required|email|unique:users,email',
             'username' => 'required|string|unique:users,username',
             'password' => 'required|string|min:5|confirmed',
-            'phone_number' => ['required', 'string'],
+            'phone_number' => 'required|string',
             'location' => 'nullable|string',
             'role_id' => 'required|integer|exists:roles,id'
         ];
