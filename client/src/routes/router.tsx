@@ -6,9 +6,12 @@ import Register from "../pages/auth/Register/Register";
 import NoNavLayout from "../layouts/NoNavLayout";
 import DefaultLayout from "../layouts/DefaultLayout";
 import ForgotPassword from "./../pages/auth/ForgotPassword/ForgotPassword";
-import ProtectedRoute from "./ProtectedRoutes";
+import {ProtectedRoute, UserProtectedRoute} from "./ProtectedRoutes";
 import PropertyList from "../pages/PropertyList/PropertyList";
 import Property from "../pages/Property/Property";
+import PropertyCard from "../components/Property-Card/PropertyCard";
+import image1 from "../../public/image1.jpg";
+import { AddProperty } from "../pages/AddProperty/AddProperty";
 
 const RouterConfig: React.FC = () => {
   return (
@@ -41,6 +44,37 @@ const RouterConfig: React.FC = () => {
           </DefaultLayout>
         }
       />
+      <Route
+        path="/card"
+        element={
+          <DefaultLayout>
+            <PropertyCard
+              id={1}
+              status={"rent"}
+              type={"house"}
+              address={{ city: "varna", street: "varna", country: "Bulgaria" }}
+              price={25000}
+              bathrooms={2}
+              bedrooms={2}
+              area={90}
+              image={image1}
+            />
+          </DefaultLayout>
+        }
+      />
+      <Route
+        path="add-property"
+        element={
+          <UserProtectedRoute
+            element={
+              <NoNavLayout>
+                <AddProperty />
+              </NoNavLayout>
+            }
+          />
+        }
+      />
+
       <Route
         path="/property/:id"
         element={

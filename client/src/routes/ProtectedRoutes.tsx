@@ -6,10 +6,15 @@ interface ProtectedRouteProps {
   element: JSX.Element;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element }) => {
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element }) => {
   const { isAuthenticated } = useAuth();
 
   return !isAuthenticated ? element : <Navigate to="/" />;
 };
 
-export default ProtectedRoute;
+export const UserProtectedRoute: React.FC<ProtectedRouteProps> = ({ element }) => {
+  const { isAuthenticated } = useAuth();
+
+  return isAuthenticated ? element : <Navigate to="/login" />;
+};
+
