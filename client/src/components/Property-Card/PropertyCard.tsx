@@ -3,21 +3,16 @@ import IconStat from "./IconStat";
 import { Property } from "../../types/Property";
 import { useNavigate } from "react-router-dom";
 import formatThousands from "../../helpers/formatThousands";
-import image1 from "../../../public/image1.jpg";
 
 function PropertyCard(props: Property): JSX.Element {
   const imageUrl: string = `http://127.0.0.1:8000/storage/${props.image}`;
+
   const isForRent: boolean = props.status === "rent";
   const navigate = useNavigate();
 
   return (
     <article className="m-2 w-64 bg-white inline-flex flex-col overflow-hidden shadow-custom rounded-md ">
-      <img
-        // src={imageUrl} // CHANGE
-        src={image1}
-        className="h-48 object-cover"
-        alt="Property image"
-      />
+      <img src={imageUrl} className="h-48 object-cover" alt="Property image" />
       <div className="font-Montserrat p-3 flex flex-col gap-1">
         <h1 className="text-theme-blue font-bold uppercase">{props.type}</h1>
         <h1 className="text-xl">

@@ -14,7 +14,11 @@ interface AuthContextType {
     rePassword: string,
     role_id: number
   ) => Promise<void>;
+  getToken: () => string | null;
 }
+export const getToken = () => {
+  return localStorage.getItem("token");
+};
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -137,7 +141,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, register }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout, register, getToken }}>
       {children}
     </AuthContext.Provider>
   );

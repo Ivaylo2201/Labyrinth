@@ -14,23 +14,25 @@ function PropertyList() {
     }
 
   return (
-    <div className="flex flex-wrap">
-      {properties.map((p, i) => {
-        return (
-          <PropertyCard
-            key={i}
-            id={p.id}
-            status={p.status}
-            type={p.type}
-            address={p.address}
-            price={p.price}
-            bathrooms={p.bathrooms}
-            bedrooms={p.bedrooms}
-            area={p.area}
-            image={p.image}
-          />
-        );
-      })}
+    <div className="flex justify-center items-center w-full h-full">
+      <div className="flex flex-row justify-start flex-wrap">
+        {properties.map((p, i) => {
+          return (
+            <PropertyCard
+              key={i}
+              id={p.id}
+              status={p.status}
+              type={p.type}
+              address={p.address}
+              price={p.price}
+              bathrooms={p.bathrooms}
+              bedrooms={p.bedrooms}
+              area={p.area}
+              image={p.image}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 }

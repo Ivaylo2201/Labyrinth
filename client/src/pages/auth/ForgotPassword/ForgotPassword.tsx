@@ -23,22 +23,41 @@ export default function Register() {
   let phoneRegex = /^(?:\+359|0)\d{9}$/;
   let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.{8,}).*$/;
 
+  const fieldValidators: Record<string, (value: string) => boolean> = {
+    email: (value) => emailRegex.test(value),
+    phone: (value) => phoneRegex.test(value),
+    password: (value) => value.length >= 8,
+    rePassword: (value) => value === password,
+  };
+
+  const fieldSetters: Record<string, React.Dispatch<React.SetStateAction<any>>> = {
+    email: setEmailAddress,
+    phone: setPhoneNumber,
+    password: setPassword,
+    rePassword: setRePassword,
+  };
+
+  const validationSetters: Record<string, React.Dispatch<React.SetStateAction<boolean | null>>> = {
+    email: setEmailIsValid,
+    phone: setPhoneIsValid,
+    password: setPasswordIsValid,
+    rePassword: setRePasswordIsValid,
+  };
+
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    if (name === "email") {
-      setEmailAddress(value);
-      setEmailIsValid(emailRegex.test(value));
-    } else if (name === "phone") {
-      setPhoneNumber(value);
-      setPhoneIsValid(phoneRegex.test(value));
-    } else if (name === "password") {
-      setPassword(value);
-      setPasswordIsValid(value.length >= 8);
-      setRePasswordIsValid(rePassword === value);
-    } else if (name === "rePassword") {
-      setRePassword(value);
-      setRePasswordIsValid(value === password);
+    if (fieldSetters[name]) {
+      fieldSetters[name](value);
+    }
+
+    if (fieldValidators[name]) {
+      const isValid = fieldValidators[name](value);
+      validationSetters[name](isValid);
+    }
+
+    if (name === "password" || name === "rePassword") {
+      setRePasswordIsValid(rePassword === value || value === password);
     }
   };
 
@@ -81,6 +100,13 @@ export default function Register() {
       <div className="absolute inset-0 bg-black bg-opacity-20 backdrop-blur-sm"></div>
 
       <div className="absolute inset-0 flex items-center justify-center">
+        <Link
+          to="/"
+          className="absolute z-20 top-0 left-0 m-1 bg-slate-100 px-3 py-1 rounded-full hover:bg-slate-600 hover:text-white duration-200"
+        >
+          Back to home
+        </Link>
+
         <div className="w-3/5  backdrop-blur-md bg-[#E0E0E0]  bg-opacity-60 rounded-lg flex justify-center text-center flex-row">
           <div className="w-1/2 bg-white flex flex-col items-center">
             <h1 className="text-2xl font-semibold uppercase tracking-wide pt-10 pb-2">Welcome</h1>
