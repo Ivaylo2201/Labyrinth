@@ -64,30 +64,32 @@ export default function Login() {
       />
       <div className="absolute inset-0 bg-black bg-opacity-20 backdrop-blur-sm"></div>
 
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-3/5  backdrop-blur-md bg-[#E0E0E0]  bg-opacity-60 rounded-lg flex justify-center text-center flex-row">
-          <div className="w-1/2 bg-white flex flex-col items-center">
+      <div className="absolute inset-0 flex items-center justify-center ">
+      <Link to="/" className="absolute z-20 top-0 left-0 m-1 bg-slate-100 px-3 py-1 rounded-full hover:bg-slate-600 hover:text-white duration-200">Back to home</Link>
+
+        <div className="w-1/2 h-96 backdrop-blur-md bg-[#E0E0E0]  bg-opacity-60 rounded-lg flex justify-center text-center flex-row">
+          <div className="w-1/2 bg-white flex flex-col items-center rounded-l-lg">
             <h1 className="text-2xl font-semibold uppercase tracking-wide pt-10 pb-2">Welcome</h1>
             <img src={logo} alt="logo" className="w-36 h-36" />
-            <p className="pb-4">Don't have an account?</p>
+            <p className="pb-4 text-lg">Don't have an account?</p>
             <Link
               to="/register"
-              className="text-md  font-semibold text-black border-black border-2
+              className="text-lg font-semibold text-black border-black border-2
             px-2 rounded-full hover:text-white hover:bg-black transition-all duration-300"
             >
               Create an account
             </Link>
           </div>
           <div
-            className="w-1/2 relative inset-0 bg-cover bg-center p-4"
+            className="w-1/2 relative inset-0 bg-cover bg-center p-4 rounded-r-lg align-middle"
             style={{ backgroundImage: `url(${bgForm})` }}
           >
-            <h2 className="text-3xl text-center pt-8 pb-5 text-white font-semibold -tracking-tighter ">
+            <h2 className="text-3xl text-center pt-8 pb-8 text-gray-200 font-semibold -tracking-tighter ">
               Login
             </h2>
             <form
               onSubmit={handleSubmit}
-              className="flex justify-center flex-col items-center gap-5 pb-5 pt-4"
+              className="flex justify-center flex-col items-center gap-6 pb-5 pt-10"
             >
               <input
                 type="text"
@@ -96,7 +98,7 @@ export default function Login() {
                 onChange={onChange}
                 id="email"
                 placeholder="Email"
-                className={`px-2 py-1 text-sm w-full ${
+                className={`px-2 py-2 text-md w-full ${
                   emailIsValid === false ? "shadow-red-500 shadow-xl" : ""
                 } ${emailIsValid === null || emailIsValid === true ? "" : ""}`}
               />
@@ -107,7 +109,7 @@ export default function Login() {
                 onChange={onChange}
                 id="password"
                 placeholder="Password"
-                className={`px-2 py-1 text-sm w-full ${
+                className={`px-2 py-2 text-md w-full ${
                   passwordIsValid === false ? "shadow-red-500 shadow-xl" : ""
                 } ${passwordIsValid === null || passwordIsValid === true ? "" : ""}`}
               />
@@ -116,9 +118,9 @@ export default function Login() {
                 <input
                   type="submit"
                   value="Login"
-                  className="text-white px-4 border-white border-2 rounded-full  hover:bg-white hover:text-black transition-all duration-300 cur"
+                  className="text-white px-4 border-white border-2 rounded-full text-lg hover:bg-white hover:text-black transition-all duration-300 cur"
                 />
-                <Link to="/forgot-password" className="text-md  font-light text-white">
+                <Link to="/forgot-password" className="text-lg  font-light text-white">
                   Forgot password?
                 </Link>
               </span>

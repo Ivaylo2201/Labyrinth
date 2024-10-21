@@ -30,7 +30,7 @@ export default function Login() {
   let emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
   // let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.{8,}).*$/;
   let phoneNumberRegex = /^(((\+|00)359[- ]?)|(0))(8[- ]?[789]([- ]?\d){7})$/gm;
-
+  let inputFields = `px-2 py-1 text-md w-full`;
   const onChangeInputs = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
@@ -112,30 +112,31 @@ export default function Login() {
       />
       <div className="absolute inset-0 bg-black bg-opacity-20 backdrop-blur-sm"></div>
 
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-3/5  backdrop-blur-md bg-[#E0E0E0]  bg-opacity-60 rounded-lg flex justify-center text-center flex-row">
-          <div className="w-1/2  bg-white flex flex-col items-center">
+      <div className="absolute inset-0 flex items-center justify-center ">
+      <Link to="/" className="absolute z-20 top-0 left-0 m-1 bg-slate-100 px-3 py-1 rounded-full hover:bg-slate-600 hover:text-white duration-200">Back to home</Link>
+        <div className="w-3/5  backdrop-blur-md bg-[#E0E0E0]  bg-opacity-60 rounded-lg flex justify-center text-center flex-row ">
+          <div className="w-1/2  bg-white flex flex-col items-center rounded-l-lg">
             <h1 className="text-2xl font-semibold uppercase tracking-wide pt-10 pb-2">Welcome</h1>
-            <img src={logo} alt="logo" className="w-36 h-36" />
-            <p className="pb-10">Already have an account? </p>
+            <img src={logo} alt="logo" className="w-36 h-36 " />
+            <p className="pb-9 text-lg">Already have an account? </p>
             <Link
               to="/login"
-              className="text-md  font-semibold text-black border-black  border-2
+              className="text-lg  font-semibold text-black border-black  border-2
             px-2 rounded-full hover:text-white hover:bg-black transition-all duration-300"
             >
               Sign in
             </Link>
           </div>
           <div
-            className="w-1/2 relative inset-0 bg-cover bg-center p-4"
+            className="w-1/2 relative inset-0 bg-cover bg-center p-4 rounded-r-lg"
             style={{ backgroundImage: `url(${bgForm})` }}
           >
-            <h2 className="text-3xl text-center pt-1 pb-2 text-white font-semibold -tracking-tighter ">
+            <h2 className="text-3xl text-center pt-1 pb-1 text-gray-200 font-semibold -tracking-tighter ">
               Register
             </h2>
             <form
               onSubmit={handleSubmit}
-              className="flex justify-center flex-col items-center gap-2 pt-4"
+              className="flex justify-center flex-col items-center gap-2 pt-3"
             >
               <input
                 type="text"
@@ -144,7 +145,7 @@ export default function Login() {
                 onChange={onChangeInputs}
                 id="username"
                 placeholder="Username"
-                className={`px-2 py-1 text-sm w-full ${
+                className={`${inputFields} ${
                   usernameIsValid === false ? "shadow-red-500 shadow-xl" : ""
                 } ${usernameIsValid === null || usernameIsValid === true ? "" : ""}`}
               />
@@ -156,7 +157,7 @@ export default function Login() {
                 onChange={onChangeInputs}
                 id="phoneNumber"
                 placeholder="Phone number"
-                className={`px-2 py-1 text-sm w-full ${
+                className={`${inputFields}  ${
                   phoneNumberIsValid === false ? "shadow-red-500 shadow-xl " : ""
                 } ${phoneNumberIsValid === null || phoneNumberIsValid === true ? "" : ""}`}
               />
@@ -168,7 +169,7 @@ export default function Login() {
                 onChange={onChangeInputs}
                 id="email"
                 placeholder="Email"
-                className={`px-2 py-1 text-sm w-full ${
+                className={`${inputFields}  ${
                   emailIsValid === false ? "shadow-red-500 shadow-xl" : ""
                 } ${emailIsValid === null || emailIsValid === true ? "" : ""}`}
               />
@@ -180,7 +181,7 @@ export default function Login() {
                 onChange={onChangeInputs}
                 id="password"
                 placeholder="Password"
-                className={`px-2 py-1 text-sm w-full ${
+                className={`${inputFields}  ${
                   passwordIsValid === false ? "shadow-red-500 shadow-xl" : ""
                 } ${passwordIsValid === null || passwordIsValid === true ? "" : ""}`}
               />
@@ -192,7 +193,7 @@ export default function Login() {
                 onChange={onChangeInputs}
                 id="rePassword"
                 placeholder="Confirm password"
-                className={`px-2 py-1 text-sm w-full ${
+                className={`${inputFields}  ${
                   rePasswordIsValid === false ? "shadow-red-500 shadow-xl" : ""
                 } ${rePasswordIsValid === null || rePasswordIsValid === true ? "" : ""}`}
               />
@@ -200,7 +201,7 @@ export default function Login() {
               <select
                 name="role"
                 id=""
-                className={`px-2 py-1 text-sm w-full ${
+                className={`${inputFields}  ${
                   roleIsValid === false ? " shadow-red-500 shadow-xl" : ""
                 } ${roleIsValid === null || roleIsValid === true ? "" : ""}`}
                 onChange={onSelectChange}
@@ -215,7 +216,7 @@ export default function Login() {
                 <input
                   type="submit"
                   value="Register"
-                  className="text-white px-4 border-white border-2 rounded-full  hover:bg-white hover:text-black transition-all duration-300"
+                  className="text-white text-lg px-4 border-white border-2 rounded-full  hover:bg-white hover:text-black transition-all duration-300"
                 />
                 {serverMsg.length > 0 && (
                   <div className="text-red-400 text-sm">
