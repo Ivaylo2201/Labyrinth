@@ -11,7 +11,7 @@ function PropertyCard(props: Property): JSX.Element {
   const navigate = useNavigate();
 
   return (
-    <article className="m-2 w-64 bg-white inline-flex flex-col overflow-hidden shadow-custom rounded-md ">
+    <article className="w-64 bg-white inline-flex flex-col overflow-hidden shadow-custom rounded-md ">
       <img src={imageUrl} className="h-48 object-cover" alt="Property image" />
       <div className="font-Montserrat p-3 flex flex-col gap-1">
         <h1 className="text-theme-blue font-bold uppercase">{props.type}</h1>

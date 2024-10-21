@@ -6,6 +6,7 @@ import logo from "../../../assets/logo.png";
 import { SetStateAction, useState } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import axios from "axios";
+import { ClipLoader } from "react-spinners";
 
 export default function Login() {
   const [emailAddress, setEmailAddress] = useState("");
@@ -65,7 +66,12 @@ export default function Login() {
       <div className="absolute inset-0 bg-black bg-opacity-20 backdrop-blur-sm"></div>
 
       <div className="absolute inset-0 flex items-center justify-center ">
-      <Link to="/" className="absolute z-20 top-0 left-0 m-1 bg-slate-100 px-3 py-1 rounded-full hover:bg-slate-600 hover:text-white duration-200">Back to home</Link>
+        <Link
+          to="/"
+          className="absolute z-20 top-0 left-0 m-1 bg-slate-100 px-3 py-1 rounded-full hover:bg-slate-600 hover:text-white duration-200"
+        >
+          Back to home
+        </Link>
 
         <div className="w-1/2 h-96 backdrop-blur-md bg-[#E0E0E0]  bg-opacity-60 rounded-lg flex justify-center text-center flex-row">
           <div className="w-1/2 bg-white flex flex-col items-center rounded-l-lg">
@@ -114,55 +120,36 @@ export default function Login() {
                 } ${passwordIsValid === null || passwordIsValid === true ? "" : ""}`}
               />
 
-              <span className="flex items-center justify-between w-full">
-                <input
-                  type="submit"
-                  value="Login"
-                  className="text-white px-4 border-white border-2 rounded-full text-lg hover:bg-white hover:text-black transition-all duration-300 cur"
-                />
-                <Link to="/forgot-password" className="text-lg  font-light text-white">
-                  Forgot password?
-                </Link>
+              <span className="w-full">
+                <span className="flex items-center justify-between w-full">
+                  <input
+                    type="submit"
+                    value="Login"
+                    className="text-white px-4 border-white border-2 rounded-full text-lg hover:bg-white hover:text-black transition-all duration-300 cur"
+                  />
+                  <Link to="/forgot-password" className="text-lg  font-light text-white">
+                    Forgot password?
+                  </Link>
+                </span>
+                <p className="text-red-400 text-sm ">
+                  {Array.isArray(errorMsg)
+                    ? errorMsg.map((msg, index) => (
+                        <span key={index}>
+                          {msg}
+                          <br />
+                        </span>
+                      ))
+                    : errorMsg}
+                </p>
+                {serverMsg && <p className="text-red-400 text-sm mt-2">{serverMsg}</p>}
               </span>
-              <p className="text-red-400 text-sm mt-2">
-                {Array.isArray(errorMsg)
-                  ? errorMsg.map((msg, index) => (
-                      <span key={index}>
-                        {msg}
-                        <br />
-                      </span>
-                    ))
-                  : errorMsg}
-              </p>
-              {serverMsg && <p className="text-red-400 text-sm mt-2">{serverMsg}</p>}
             </form>
           </div>
         </div>
       </div>
       {loading && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="loading-spinner">
-            <svg
-              className="animate-spin h-16 w-16 text-white"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              ></circle>
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-              ></path>
-            </svg>
-          </div>
+        <div className="sweet-loading h-screen fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 backdrop-blur-sm">
+          <ClipLoader size={150} color={"#ffff"} className="w-3" loading={loading} />
         </div>
       )}
     </div>
