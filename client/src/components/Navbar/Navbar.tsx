@@ -37,7 +37,7 @@ const Navbar = () => {
           <h1 className="text-2xl font-bold">Labyrinth</h1>
         </a>
 
-        <div className="w-2/5 flex items-center gap-10 justify-center">
+        <div className="w-full flex items-center gap-10 justify-center">
           <NavButton name="For buy" location="/properties?status=buy" className="primary-button" />
           <NavButton
             name="For rent"
@@ -45,7 +45,11 @@ const Navbar = () => {
             className="primary-button"
           />
           {isAuthenticated && (
-            <NavButton name="Add property" location="/add-property" className="primary-button  text-2xl" />
+            <NavButton
+              name="Add property"
+              location="/add-property"
+              className="primary-button"
+            />
           )}
           <NavButton name="Contact" location="/" className="primary-button" />
           <NavButton name="Blogs" location="/" className="primary-button" />

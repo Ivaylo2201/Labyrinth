@@ -1,6 +1,7 @@
-import { useLocation } from 'react-router-dom';
-import useProperties from '../../hooks/useProperties';
-import PropertyCard from '../../components/Property-Card/PropertyCard';
+import { useLocation } from "react-router-dom";
+import useProperties from "../../hooks/useProperties";
+import PropertyCard from "../../components/Property-Card/PropertyCard";
+import { ClipLoader } from "react-spinners";
 
 function PropertyList() {
   const queryParams = useLocation().search;
@@ -8,14 +9,17 @@ function PropertyList() {
 
   const { data: properties } = useProperties(url);
 
-    if (properties === undefined) {
-        return <p>Loading...</p>;
-        // return <Spinner />
-    }
+  if (properties === undefined) {
+    return (
+      <span className="w-full h-screen flex justify-center items-center">
+        <ClipLoader size={200} color={"#333333"} />;
+      </span>
+    );
+  }
 
   return (
-    <div className="flex justify-center items-center w-full h-full">
-      <div className="flex flex-row justify-start flex-wrap">
+    <div className="flex justify-center items-center border-2">
+      <div className="flex flex-row p-2  flex-wrap gap-4">
         {properties.map((p, i) => {
           return (
             <PropertyCard
