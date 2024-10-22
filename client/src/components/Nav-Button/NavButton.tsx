@@ -2,11 +2,11 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 interface NavButtonProps {
-  name: string; 
-  location: string; 
-  className?: string; 
-  disabled?: boolean; 
-  ariaLabel?: string; 
+  name: string;
+  location: string;
+  className?: string;
+  disabled?: boolean;
+  ariaLabel?: string;
 }
 
 const NavButton: React.FC<NavButtonProps> = ({
@@ -16,18 +16,18 @@ const NavButton: React.FC<NavButtonProps> = ({
   disabled = false,
   ariaLabel,
 }) => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const handleClick = () => {
     if (!disabled) {
-      navigate(location); 
+      navigate(location);
     }
   };
 
   return (
     <button
       onClick={handleClick}
-      className={`nav-button ${className} font-Montserrat text-lg`}
+      className={`nav-button ${className} font-Montserrat text-lg text-white hover:scale-105`}
       disabled={disabled}
       aria-label={ariaLabel || name}
     >

@@ -11,7 +11,7 @@ function PropertyCard(props: Property): JSX.Element {
   const navigate = useNavigate();
 
   return (
-    <article className="w-64 bg-white inline-flex flex-col overflow-hidden shadow-custom rounded-md ">
+    <article className="w-full lg:w-64 bg-white inline-flex flex-col overflow-hidden shadow-sm shadow-black rounded-md ">
       <img src={imageUrl} className="h-48 object-cover" alt="Property image" />
       <div className="font-Montserrat p-3 flex flex-col gap-1">
         <h1 className="text-theme-blue font-bold uppercase">{props.type}</h1>
@@ -27,10 +27,10 @@ function PropertyCard(props: Property): JSX.Element {
         <IconStat LucideIcon={Bath} stat={props.bathrooms} />
         <IconStat LucideIcon={Expand} stat={`${props.area} sqm`} />
       </div>
-      <div className="py-5 flex justify-center">
+      <div className="py-5 flex justify-center px-4">
         <button
           onClick={() => navigate(`/property/${props.id}`)}
-          className="font-Montserrat bg-charcoal hover:bg-light-charcoal duration-150 px-10 py-2 rounded-full text-white"
+          className="w-full lg:w-auto font-Montserrat bg-charcoal hover:bg-light-charcoal duration-150 px-10 py-3 rounded-full text-white"
         >
           Details
         </button>
