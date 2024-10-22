@@ -125,11 +125,6 @@ const PropertyForm: React.FC = () => {
     "Parking",
     "Air Conditioning",
     "Fridge",
-    "Wi-Fi",
-    "Kitchen",
-    "Parking",
-    "Air Conditioning",
-    "Fridge",
   ];
 
   return (
