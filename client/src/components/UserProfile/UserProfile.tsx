@@ -13,10 +13,6 @@ function UserProfile({ user }: UserProfileProps) {
                 <p>{user.username}</p>
             </div>
             <div className='flex gap-2 justify-center items-center'>
-                <Mail size={23} />
-                <p>{user.email}</p>
-            </div>
-            <div className='flex gap-2 justify-center items-center'>
                 <PhoneCall size={23} />
                 <p>{user.phone_number}</p>
             </div>

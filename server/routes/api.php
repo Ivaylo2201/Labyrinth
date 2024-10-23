@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FeatureController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\UserController;
@@ -18,6 +19,8 @@ Route::prefix('/properties')->group(function () {
     Route::get('/{id}', [PropertyController::class, 'show']);
     Route::get('/', [PropertyController::class, 'index']);
 });
+
+Route::get('/features', [FeatureController::class, 'index']);
 
 Route::prefix('/auth')->group(function () {
     Route::post('/signin', [AuthController::class, 'sign_in']);

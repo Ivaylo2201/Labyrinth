@@ -9,14 +9,6 @@ function Description({ text }: DescriptionProps) {
             <p className='my-5'>{text}</p>
             <hr className='bg-charcoal w-full h-[1px]' />
         </div>
-
-        // <div className="w-4/5 flex flex-col my-5">
-        //     <div className='bg-light-charcoal w-full h-[1px]'></div>
-        //     <div className='bg-green-500 w-4/5 h-40 my-5'>
-        //         <p className='break-all'>{text}</p>
-        //     </div>
-        //     <div className='bg-light-charcoal w-full h-[1px]'></div>
-        // </div>
     );
 }
 
