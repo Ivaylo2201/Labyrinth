@@ -6,8 +6,8 @@ import formatThousands from '../../helpers/formatThousands';
 import { capitalize } from '../../helpers/capitalize';
 import { getDate } from '../../helpers/getDate';
 import Description from '../../components/Description/Description';
-import UserProfile from '../../components/UserProfile/UserProfile';
 import FeatureList from '../../components/Features-List/FeaturesList';
+import PropertyUserProfile from '../../components/PropertyUserProfile/PropertyUserProfile';
 
 function Property() {
     const { id } = useParams();
@@ -47,7 +47,7 @@ function Property() {
                     <p className='font-bold'>
                         Posted on: {getDate(property.created_at)}
                     </p>
-                    <UserProfile user={property.user} />
+                    <PropertyUserProfile user={property.user} />
                 </div>
             </div>
 
