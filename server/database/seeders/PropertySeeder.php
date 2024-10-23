@@ -3,9 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\Address;
+use App\Models\Feature;
+use App\Models\Image;
 use App\Models\Property;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class PropertySeeder extends Seeder
@@ -38,8 +39,18 @@ class PropertySeeder extends Seeder
             ]
         ];
 
-        foreach ($properties as $property) {
-            $instance = Property::create($property);
+        $images = [
+            ['2i27hA8Onbx2WJ1BhxhqGnVr5LajoreHEAOGxKnY.jpg', 'D4w0xIFbGi1A9Xc2wsGuJo1Vvri69RVUvg8QefeO.jpg'],
+            ['zySVnSDJaqTEhTYIaGLxYFs2Hr4Vp9hNvdMgnCMX.jpg', '5ObX6wppdD4egUp24OCY2hvuMbPqNwoXbmejMUfh.jpg'],
+        ];
+
+        $features = [
+            Feature::whereRaw('id % 2 = 0')->pluck('id'),
+            Feature::whereRaw('id % 2 != 0')->pluck('id'),
+        ];
+
+        for ($i = 0; $i < 2; $i++) {
+            $instance = Property::create($properties[$i]);
 
             Address::create([
                 'country' => 'Bulgaria',
@@ -47,6 +58,15 @@ class PropertySeeder extends Seeder
                 'street' => '123 Ivan Vazov str.',
                 'property_id' => $instance->id,
             ]);
+
+            foreach ($images[$i] as $image) {
+                Image::create([
+                    'image' => 'images/' . $image,
+                    'property_id' => $instance->id,
+                ]);
+            }
+
+            $instance->features()->attach($features[$i]);
         }
     }
 }

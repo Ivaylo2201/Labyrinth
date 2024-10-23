@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FeatureController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\PropertyController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,7 @@ Route::prefix('/properties')->group(function () {
     Route::get('/', [PropertyController::class, 'index']);
 });
 
+Route::get('/roles', [RoleController::class, 'index']);
 Route::get('/features', [FeatureController::class, 'index']);
 
 Route::prefix('/auth')->group(function () {
@@ -38,6 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::prefix('/profile')->group(function () {
         Route::get('/', [UserController::class, 'index']);
+        Route::get('/properties', [UserController::class, 'properties']);
         Route::delete('/delete', [UserController::class, 'destroy']);
     });
 });

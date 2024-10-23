@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PropertyShortResource;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Response;
@@ -22,6 +23,20 @@ class UserController extends Controller
     {
         return response()->json(
             UserResource::collection(User::all()),
+            Response::HTTP_OK
+        );
+    }
+
+    public function properties(Request $request): JsonResponse
+    {
+        $properties = $request->user()->properties;
+
+        if ($properties->isEmpty()) {
+            return response()->json(['message' => 'No properties found.'], Response::HTTP_NO_CONTENT);
+        }
+
+        return response()->json(
+            PropertyShortResource::collection($properties),
             Response::HTTP_OK
         );
     }
