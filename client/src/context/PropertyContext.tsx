@@ -64,7 +64,6 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         files,
         features,
       };
-      console.log(fields);
 
       const isValid = Object.values(fields).every(
         (value) => value !== "" && value !== undefined && value !== null
@@ -94,7 +93,6 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       features.forEach((featureId) => formData.append("features[]", featureId.toString()));
 
       const token = getToken();
-      console.log(formData);
 
       const response = await axios.post("http://127.0.0.1:8000/api/properties/", formData, {
         headers: {
@@ -104,7 +102,6 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       });
 
       if (response.status === 201) {
-        console.log("Property created successfully");
         setFormValidMsg("Property created successfully!");
         setIsFormValid(true);
         navigate("/properties");
