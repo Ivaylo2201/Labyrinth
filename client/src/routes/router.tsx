@@ -47,13 +47,13 @@ const RouterConfig: React.FC = () => {
       <Route
         path="add-property"
         element={
-          <UserProtectedRoute
-            element={
+          // <UserProtectedRoute
+          //   element={
               <NoNavLayout>
                 <AddProperty />
               </NoNavLayout>
-            }
-          />
+          //   }
+          // />
         }
       />
 
