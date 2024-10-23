@@ -1,10 +1,8 @@
-import { useContext, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import Dropzone from "../../components/Dropzone/Dropzone";
 import Modal from "react-modal";
-import { getToken } from "../../context/AuthContext";
-import { PropertyProvider, useProperty } from "../../context/PropertyContext";
-import { ClipLoader } from "react-spinners";
+import { useProperty } from "../../context/PropertyContext";
 
 const PropertyForm: React.FC<{ setLoading: (loading: boolean) => void }> = ({ setLoading }) => {
   const { createProperty, isFormValid, formValidMsg } = useProperty();

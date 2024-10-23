@@ -3,10 +3,11 @@ import bg2 from "../../../assets/bg2.png";
 import bgForm from "../../../assets/signImage.jpg";
 import logo from "../../../assets/logo.png";
 
-import { SetStateAction, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../../context/AuthContext";
-import axios from "axios";
 import { ClipLoader } from "react-spinners";
+import { Axios } from "../../../helpers/http";
+import { capitalize } from "../../../helpers/capitalize";
 
 export default function Login() {
   const { register } = useAuth();
@@ -27,6 +28,21 @@ export default function Login() {
   const [serverMsg, setServerMsg] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const [roleOptions, setRoleOptions] = useState<{ id: number; name: string }[]>([]);
+
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const response = await Axios.get("/roles");
+        setRoleOptions(response.data);
+      } catch (error) {
+        console.error("Error fetching roles:", error);
+      }
+    };
+
+    fetchRoles();
+  }, []);
 
   let emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
   // let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.{8,}).*$/;
@@ -223,8 +239,9 @@ export default function Login() {
                 <option value="-99" selected>
                   Choose a role
                 </option>
-                <option value="1">Company</option>
-                <option value="2">User</option>
+
+                {roleOptions.map(({id, name}) => <option value={id}>{capitalize(name)}</option>)}
+
               </select>
               <span className="lg:w-auto w-full">
                 <input
