@@ -65,16 +65,24 @@ export default function Login() {
       />
       <div className="absolute inset-0 bg-black bg-opacity-20 backdrop-blur-sm"></div>
 
-      <div className="absolute inset-0 flex items-center justify-center ">
-        <Link
-          to="/"
-          className="absolute z-20 top-0 left-0 m-1 bg-slate-100 px-3 py-1 rounded-full hover:bg-slate-600 hover:text-white duration-200"
-        >
-          Back to home
-        </Link>
+      <div className="absolute inset-0 flex items-center justify-center w-full">
+        <div className="bg-slate-700 w-full absolute top-0">
+          <Link
+            to="/"
+            className="absolute z-20 top-0 left-0 m-1 bg-slate-100 px-3 py-1 rounded-full hover:bg-slate-600 hover:text-white duration-200"
+          >
+            Back to home
+          </Link>
+          <Link
+            to="/register"
+            className="lg:hidden absolute z-20 top-0 right-0 m-1 bg-slate-100 px-3 py-1 rounded-full hover:bg-slate-600 hover:text-white duration-200"
+          >
+            Go to sign up
+          </Link>
+        </div>
 
-        <div className="w-1/2 h-96 backdrop-blur-md bg-[#E0E0E0]  bg-opacity-60 rounded-lg flex justify-center text-center flex-row">
-          <div className="w-1/2 bg-white flex flex-col items-center rounded-l-lg">
+        <div className="w-2/3 lg:w-1/2 h-96 backdrop-blur-md bg-[#E0E0E0]  bg-opacity-60 rounded-lg flex justify-center text-center flex-row">
+          <div className="hidden lg:block lg:w-1/2 bg-white flex flex-col items-center rounded-l-lg">
             <h1 className="text-2xl font-semibold uppercase tracking-wide pt-10 pb-2">Welcome</h1>
             <img src={logo} alt="logo" className="w-36 h-36" />
             <p className="pb-4 text-lg">Don't have an account?</p>
@@ -87,10 +95,10 @@ export default function Login() {
             </Link>
           </div>
           <div
-            className="w-1/2 relative inset-0 bg-cover bg-center p-4 rounded-r-lg align-middle"
+            className="w-full lg:w-1/2 relative inset-0 bg-cover bg-center p-4 rounded-lg lg:rounded-r-lg align-middle"
             style={{ backgroundImage: `url(${bgForm})` }}
           >
-            <h2 className="text-3xl text-center pt-8 pb-8 text-gray-200 font-semibold -tracking-tighter ">
+            <h2 className="text-4xl lg:text-3xl text-center pt-8 pb-5 lg:pb-8 text-gray-200 font-semibold -tracking-tighter ">
               Login
             </h2>
             <form
@@ -121,11 +129,11 @@ export default function Login() {
               />
 
               <span className="w-full">
-                <span className="flex items-center justify-between w-full">
+                <span className="flex flex-col gap-2 items-center justify-between w-full">
                   <input
                     type="submit"
                     value="Login"
-                    className="text-white px-4 border-white border-2 rounded-full text-lg hover:bg-white hover:text-black transition-all duration-300 cur"
+                    className="text-white lg:px-4 w-full p-2 border-white border-2 rounded-full text-xl lg:text-lg hover:bg-white hover:text-black transition-all duration-300 cur"
                   />
                   <Link to="/forgot-password" className="text-lg  font-light text-white">
                     Forgot password?

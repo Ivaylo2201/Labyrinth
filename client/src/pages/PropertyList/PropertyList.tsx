@@ -12,14 +12,15 @@ function PropertyList() {
   if (properties === undefined) {
     return (
       <span className="w-full h-screen flex justify-center items-center">
-        <ClipLoader size={200} color={"#333333"} />;
+        <ClipLoader size={200} color={"#333333"} />
       </span>
     );
   }
 
   return (
     <div className="flex justify-center items-center border-2">
-      <div className="flex flex-row p-2  flex-wrap gap-4">
+      {/* <div className="flex flex-row p-2  flex-wrap gap-4"> */}
+      <div className="flex flex-col gap-4 w-full p-4 lg:flex-row lg:flex-wrap">
         {properties.map((p, i) => {
           return (
             <PropertyCard
