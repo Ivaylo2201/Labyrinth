@@ -6,7 +6,7 @@ import { useProperty } from "../../context/PropertyContext";
 
 const PropertyForm: React.FC<{ setLoading: (loading: boolean) => void }> = ({ setLoading }) => {
   const { createProperty, isFormValid, formValidMsg } = useProperty();
-  const inputStyle = `w-full px-2 py-1 outline-none focus:font-bold focus:text-black bg-gray-300`;
+  const inputStyle = `w-full px-3 py-2 lg:px-2 lg:py-1 outline-none focus:font-bold focus:text-black bg-gray-300`;
   const [type, setType] = useState("");
   const [status, setStatus] = useState("");
   const [price, setPrice] = useState<number | null>(null);
@@ -134,8 +134,13 @@ const PropertyForm: React.FC<{ setLoading: (loading: boolean) => void }> = ({ se
   };
 
   return (
-    <form className="flex flex-wrap w-full gap-8" id="property-form" onSubmit={handleSubmit}>
-      <div className="flex flex-col flex-1 gap-6">
+    <form
+      className="flex flex-col lg:flex-row flex-wrap w-full gap-8"
+      id="property-form"
+      onSubmit={handleSubmit}
+    >
+      <div className="flex flex-col lg:flex-1 gap-6 pt-12 lg:pt-0">
+        <h1 className="text-black pt-36 text-center text-2xl font-bold lg:hidden">Add property</h1>
         <select name="type" onChange={onChangeSelect} className={inputStyle}>
           <option value="" disabled selected>
             Choose Property Type
@@ -234,7 +239,7 @@ const PropertyForm: React.FC<{ setLoading: (loading: boolean) => void }> = ({ se
         />
       </div>
 
-      <div className="flex flex-col flex-1 gap-3 bg-gray-300 h-80 p-3 overflow-auto">
+      <div className="flex flex-col flex-1 gap-3 bg-gray-300  lg:h-80 p-3 lg:overflow-auto">
         <h3>Select Features</h3>
         {featureOptions.map((feature) => (
           <label key={feature.id} className="flex items-center space-x-1 ">
@@ -255,7 +260,7 @@ const PropertyForm: React.FC<{ setLoading: (loading: boolean) => void }> = ({ se
           <input
             type="submit"
             value="Add Property"
-            className="bg-blue-500 text-white py-3 px-6 w-56 hover:bg-blue-700 duration-200 cursor-pointer rounded-sm "
+            className="bg-blue-500 text-white py-3 px-6 lg:w-56 w-full hover:bg-blue-700 duration-200 cursor-pointer rounded-sm "
           />
         </span>
       </div>
@@ -268,9 +273,14 @@ const PropertyForm: React.FC<{ setLoading: (loading: boolean) => void }> = ({ se
       >
         <h2>Upload Images</h2>
         <Dropzone onDrop={(acceptedFiles) => setFiles(acceptedFiles)} />
-        <button className="bg-green-500 px-3 py-1 rounded-md text-white" onClick={openCloseModal}>
-          Done
-        </button>
+        <span className="px-10 lg:px-0 w-full">
+          <button
+            className="bg-green-500 lg:px-3 w-full py-1 rounded-md text-white text-2xl lg:"
+            onClick={openCloseModal}
+          >
+            Done
+          </button>
+        </span>
       </Modal>
     </form>
   );
