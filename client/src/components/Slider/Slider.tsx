@@ -17,8 +17,7 @@ function ImageSlider({ images }: SliderProps) {
             pagination={{ clickable: false }} 
             autoplay={{ delay: 5000 }} 
             loop={true} 
-            className='mySwiper rounded-md w-96 h-96 lg:w-[50rem] lg:h-[500px]'
-            // style={{ width: '50rem', height: '500px'}} 
+            className='mySwiper w-96 h-96 lg:w-[50rem] lg:h-[500px] shadow-xl'
         >
             {images.map((img, index) => (
                 <SwiperSlide key={index}>

@@ -1,4 +1,4 @@
-import { Mail, PhoneCall, UserRound } from 'lucide-react';
+import { PhoneCall, UserRound } from 'lucide-react';
 import { User } from '../../types/User';
 
 type UserProfileProps = {
