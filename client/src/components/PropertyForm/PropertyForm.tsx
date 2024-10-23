@@ -1,11 +1,12 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import axios from "axios";
 import Dropzone from "../../components/Dropzone/Dropzone";
 import Modal from "react-modal";
 import { getToken } from "../../context/AuthContext";
 import { PropertyProvider, useProperty } from "../../context/PropertyContext";
+import { ClipLoader } from "react-spinners";
 
-const PropertyForm: React.FC = () => {
+const PropertyForm: React.FC<{ setLoading: (loading: boolean) => void }> = ({ setLoading }) => {
   const { createProperty, isFormValid, formValidMsg } = useProperty();
   const inputStyle = `w-full px-2 py-1 outline-none focus:font-bold focus:text-black bg-gray-300`;
   const [type, setType] = useState("");
@@ -22,6 +23,21 @@ const PropertyForm: React.FC = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [features, setFeatures] = useState<number[]>([]);
   const [formMsg, setFormMsg] = useState<string>("");
+
+  const [featureOptions, setFeatureOptions] = useState<{ id: number; name: string }[]>([]);
+
+  useEffect(() => {
+    const fetchFeatures = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/api/features");
+        setFeatureOptions(response.data);
+      } catch (error) {
+        console.error("Error fetching features:", error);
+      }
+    };
+
+    fetchFeatures();
+  }, []);
 
   const onChangeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -67,7 +83,7 @@ const PropertyForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    setLoading(true);
     await createProperty(
       type,
       status,
@@ -83,6 +99,7 @@ const PropertyForm: React.FC = () => {
       features,
       (msg: string) => setFormMsg(msg)
     );
+    setLoading(false);
   };
 
   const openCloseModal = () => setModalIsOpen(!modalIsOpen);
@@ -107,24 +124,6 @@ const PropertyForm: React.FC = () => {
       backgroundColor: "rgba(0, 0, 0, 0.5)",
     },
   };
-
-  const featureOptions = [
-    { id: 1, name: "Refrigerator" },
-    { id: 2, name: "Oven and Stove" },
-    { id: 3, name: "Dishwasher" },
-    { id: 4, name: "Washer and Dryer" },
-    { id: 5, name: "Air Conditioning" },
-    { id: 6, name: "Heating System" },
-    { id: 7, name: "Television" },
-    { id: 8, name: "Internet" },
-    { id: 9, name: "Balcony" },
-    { id: 10, name: "Closets" },
-    { id: 11, name: "Swimming Pool" },
-    { id: 12, name: "Fireplace" },
-    { id: 13, name: "Security System" },
-    { id: 14, name: "Parking Space" },
-    { id: 15, name: "Landscaping" },
-  ];
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const featureId = parseInt(e.target.name);
