@@ -16,7 +16,8 @@ interface PropertyContextType {
     country: string,
     description: string,
     files: File[],
-    features: string[],
+    features: number[],
+
     setFormValidMsg: (msg: string) => void
   ) => Promise<void>;
   isFormValid: boolean;
@@ -43,7 +44,7 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     country: string,
     description: string,
     files: File[],
-    features: string[],
+    features: number[],
     setFormValidMsg: (msg: string) => void
   ) => {
     const formData = new FormData();
@@ -63,6 +64,7 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         files,
         features,
       };
+      console.log(fields);
 
       const isValid = Object.values(fields).every(
         (value) => value !== "" && value !== undefined && value !== null
@@ -73,7 +75,7 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         setIsFormValid(false);
         return;
       }
-
+      setIsFormValid(true);
       files.forEach((file) => formData.append("images[]", file));
 
       [
@@ -87,10 +89,12 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         { key: "street", value: street },
         { key: "country", value: country },
         { key: "description", value: description },
-        { key: "features[]", value: JSON.stringify(features) },
       ].forEach(({ key, value }) => formData.append(key, String(value)));
 
+      features.forEach((featureId) => formData.append("features[]", featureId.toString()));
+
       const token = getToken();
+      console.log(formData);
 
       const response = await axios.post("http://127.0.0.1:8000/api/properties/", formData, {
         headers: {
