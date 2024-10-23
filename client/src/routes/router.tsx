@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import Home from "../pages/Home/Home";
 import Login from "../pages/auth/Login/Login";
@@ -9,11 +9,21 @@ import ForgotPassword from "./../pages/auth/ForgotPassword/ForgotPassword";
 import { ProtectedRoute, UserProtectedRoute } from "./ProtectedRoutes";
 import PropertyList from "../pages/PropertyList/PropertyList";
 import Property from "../pages/Property/Property";
-import PropertyCard from "../components/Property-Card/PropertyCard";
-import image1 from "../../public/image1.jpg";
 import { AddProperty } from "../pages/AddProperty/AddProperty";
+import { getProfile, getToken } from "../context/AuthContext";
+import UserProfile from "../components/UserProfile/UserProfile";
+import { User } from "../types/User";
+import { ClipLoader } from "react-spinners";
 
 const RouterConfig: React.FC = () => {
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const token = getToken();
+    if (token) {
+      getProfile(token).then((userData) => setUser(userData));
+    }
+  }, [getToken]);
   return (
     <Routes>
       <Route
@@ -89,6 +99,31 @@ const RouterConfig: React.FC = () => {
           />
         }
       />
+      <Route
+        path="/forgot-password"
+        element={
+          <ProtectedRoute
+            element={
+              <NoNavLayout>
+                <ForgotPassword />
+              </NoNavLayout>
+            }
+          />
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <UserProtectedRoute
+            element={
+              <NoNavLayout>
+                {user ? <UserProfile user={user} /> : <ClipLoader size={200} color="#444444" />}
+              </NoNavLayout>
+            }
+          />
+        }
+      />
+
       <Route
         path="/not-found"
         // Extract to separate page

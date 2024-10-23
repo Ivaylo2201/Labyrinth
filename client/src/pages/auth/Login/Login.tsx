@@ -129,11 +129,11 @@ export default function Login() {
               />
 
               <span className="w-full">
-                <span className="flex flex-col gap-2 items-center justify-between w-full">
+                <span className="flex flex-col lg:flex-row gap-2 items-center justify-between w-full">
                   <input
                     type="submit"
                     value="Login"
-                    className="text-white lg:px-4 w-full p-2 border-white border-2 rounded-full text-xl lg:text-lg hover:bg-white hover:text-black transition-all duration-300 cur"
+                    className="text-white lg:px-4 lg:py-1 w-full lg:w-auto p-2 border-white border-2 rounded-full text-xl lg:text-lg hover:bg-white hover:text-black transition-all duration-300 cur"
                   />
                   <Link to="/forgot-password" className="text-lg  font-light text-white">
                     Forgot password?

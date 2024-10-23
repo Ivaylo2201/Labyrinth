@@ -154,3 +154,14 @@ export const useAuth = () => {
   }
   return context;
 };
+
+export const getProfile = async (token: string) => {
+  axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  const response = await Axios.get("http://127.0.0.1:8000/api/profile/", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  
+  return response.data;
+};
