@@ -1,11 +1,12 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import axios from "axios";
 import Dropzone from "../../components/Dropzone/Dropzone";
 import Modal from "react-modal";
 import { getToken } from "../../context/AuthContext";
 import { PropertyProvider, useProperty } from "../../context/PropertyContext";
+import { ClipLoader } from "react-spinners";
 
-const PropertyForm: React.FC = () => {
+const PropertyForm: React.FC<{ setLoading: (loading: boolean) => void }> = ({ setLoading }) => {
   const { createProperty, isFormValid, formValidMsg } = useProperty();
   const inputStyle = `w-full px-2 py-1 outline-none focus:font-bold focus:text-black bg-gray-300`;
   const [type, setType] = useState("");
@@ -20,8 +21,23 @@ const PropertyForm: React.FC = () => {
   const [description, setDescription] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [features, setFeatures] = useState<string[]>([]);
+  const [features, setFeatures] = useState<number[]>([]);
   const [formMsg, setFormMsg] = useState<string>("");
+
+  const [featureOptions, setFeatureOptions] = useState<{ id: number; name: string }[]>([]);
+
+  useEffect(() => {
+    const fetchFeatures = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/api/features");
+        setFeatureOptions(response.data);
+      } catch (error) {
+        console.error("Error fetching features:", error);
+      }
+    };
+
+    fetchFeatures();
+  }, []);
 
   const onChangeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -65,19 +81,9 @@ const PropertyForm: React.FC = () => {
     setDescription(e.target.value);
   };
 
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = e.target;
-    if (checked) {
-      setFeatures([...features, name]);
-    } else {
-      setFeatures(features.filter((feature) => feature !== name));
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(formValidMsg);
-
+    setLoading(true);
     await createProperty(
       type,
       status,
@@ -93,6 +99,7 @@ const PropertyForm: React.FC = () => {
       features,
       (msg: string) => setFormMsg(msg)
     );
+    setLoading(false);
   };
 
   const openCloseModal = () => setModalIsOpen(!modalIsOpen);
@@ -118,14 +125,15 @@ const PropertyForm: React.FC = () => {
     },
   };
 
-  const featureOptions = [
-    "TV",
-    "Wi-Fi",
-    "Kitchen",
-    "Parking",
-    "Air Conditioning",
-    "Fridge",
-  ];
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const featureId = parseInt(e.target.name);
+    const { checked } = e.target;
+    if (checked) {
+      setFeatures([...features, featureId]);
+    } else {
+      setFeatures(features.filter((id) => id !== featureId));
+    }
+  };
 
   return (
     <form className="flex flex-wrap w-full gap-8" id="property-form" onSubmit={handleSubmit}>
@@ -231,14 +239,14 @@ const PropertyForm: React.FC = () => {
       <div className="flex flex-col flex-1 gap-3 bg-gray-300 h-80 p-3 overflow-auto">
         <h3>Select Features</h3>
         {featureOptions.map((feature) => (
-          <label key={feature} className="flex items-center space-x-1 ">
+          <label key={feature.id} className="flex items-center space-x-1 ">
             <input
               type="checkbox"
-              name={feature}
-              checked={features.includes(feature)}
+              name={String(feature.id)}
+              checked={features.includes(feature.id)}
               onChange={handleCheckboxChange}
             />
-            <span>{feature}</span>
+            <span>{feature.name}</span>
           </label>
         ))}
       </div>
