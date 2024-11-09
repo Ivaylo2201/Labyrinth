@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState } from "react";
 import axios from "axios";
 import { getToken } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { Axios } from "../helpers/http";
+import { Key } from "lucide-react";
 
 interface PropertyContextType {
   createProperty: (
@@ -17,12 +19,32 @@ interface PropertyContextType {
     description: string,
     files: File[],
     features: number[],
-
+    setFormValidMsg: (msg: string) => void
+  ) => Promise<void>;
+  updateProperty: (
+    id: number,
+    propertyData: UpdatePropertyData,
     setFormValidMsg: (msg: string) => void
   ) => Promise<void>;
   isFormValid: boolean;
   setIsFormValid: (isValid: boolean) => void;
   formValidMsg: string;
+  deleteProperty: (id: number) => Promise<void>;
+}
+
+interface UpdatePropertyData {
+  type: string;
+  status: string;
+  price: number;
+  area: number;
+  bedrooms: number;
+  bathrooms: number;
+  city: string;
+  street: string;
+  country: string;
+  description: string;
+  files?: File[];
+  features: number[];
 }
 
 const PropertyContext = createContext<PropertyContextType | undefined>(undefined);
@@ -122,14 +144,88 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
+  const updateProperty = async (
+    id: number,
+    propertyData: UpdatePropertyData,
+    setFormValidMsg: (msg: string) => void
+  ) => {
+    const formData = new FormData();
+    const fields = {
+      type: propertyData.type,
+      status: propertyData.status,
+      price: propertyData.price,
+      area: propertyData.area,
+      bedrooms: propertyData.bedrooms,
+      bathrooms: propertyData.bathrooms,
+      city: propertyData.city,
+      street: propertyData.street,
+      country: propertyData.country,
+      description: propertyData.description,
+      features: propertyData.features,
+    };
+
+    const isValid = Object.values(fields).every(
+      (value) => value !== "" && value !== undefined && value !== null
+    );
+    if (!isValid || (propertyData.files && propertyData.files.length === 0)) {
+      setFormValidMsg("All fields are required and at least one image must be uploaded.");
+      return;
+    }
+
+    if (propertyData.files) {
+      propertyData.files.forEach((file) => formData.append("images[]", file));
+    }
+    console.log(propertyData);
+
+    Object.entries(fields).forEach(([key, value]) =>
+      formData.append(key, Array.isArray(value) ? JSON.stringify(value) : String(value))
+    );
+
+    try {
+      const token = getToken();
+      const response = await Axios.patch(`/properties/${id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (response.status === 200) {
+        setFormValidMsg("Property updated successfully!");
+      } else {
+        setFormValidMsg("Failed to update property.");
+      }
+    } catch (error: any) {
+      handleError(error, setFormValidMsg);
+    }
+  };
+
+  // Handle errors in both create and update functions
+  const handleError = (error: any, setFormValidMsg: (msg: string) => void) => {
+    if (axios.isAxiosError(error) && error.response) {
+      setFormValidMsg("Error: " + error.response.data.message);
+    } else {
+      setFormValidMsg("An unexpected error occurred. Please try again.");
+    }
+  };
+
   return (
-    <PropertyContext.Provider value={{ createProperty, isFormValid, setIsFormValid, formValidMsg }}>
+    <PropertyContext.Provider
+      value={{
+        createProperty,
+        isFormValid,
+        setIsFormValid,
+        formValidMsg,
+        updateProperty,
+        deleteProperty,
+      }}
+    >
       {children}
     </PropertyContext.Provider>
   );
 };
 
-export const useProperty = () => {
+export const usePropertyModule = () => {
   const context = useContext(PropertyContext);
   const msg = context?.formValidMsg;
   if (!context) {
@@ -137,3 +233,31 @@ export const useProperty = () => {
   }
   return context;
 };
+
+export const deleteProperty = async (id: number) => {
+  try {
+    const token = getToken();
+
+    const response = await Axios.delete(`/properties/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.status === 200 || response.status === 204) {
+      console.log("Property deleted successfully!");
+    } else {
+      console.error("Error deleting property", response);
+    }
+  } catch (error: any) {
+    if (axios.isAxiosError(error) && error.response) {
+      console.error("Response error:", error.response.data);
+    } else {
+      console.error("Unexpected error:", error.message);
+    }
+  }
+};
+
+export const usePropertyContext = () => useContext(PropertyContext);
+
+// export default PropertyProvider;

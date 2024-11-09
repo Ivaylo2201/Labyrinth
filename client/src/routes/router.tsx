@@ -14,6 +14,8 @@ import { getProfile, getToken } from "../context/AuthContext";
 import UserProfile from "../components/UserProfile/UserProfile";
 import { User } from "../types/User";
 import { ClipLoader } from "react-spinners";
+import UpdateProperty from "../pages/UpdateProperty/UpdateProperty";
+import { OwnerProtectedRoute } from "./OwnerProtectedRoute";
 
 const RouterConfig: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -57,13 +59,13 @@ const RouterConfig: React.FC = () => {
       <Route
         path="add-property"
         element={
-          // <UserProtectedRoute
-          //   element={
+          <UserProtectedRoute
+            element={
               <NoNavLayout>
                 <AddProperty />
               </NoNavLayout>
-          //   }
-          // />
+            }
+          />
         }
       />
 
@@ -73,6 +75,18 @@ const RouterConfig: React.FC = () => {
           <DefaultLayout>
             <Property />
           </DefaultLayout>
+        }
+      />
+      <Route
+        path="/property/:id/edit"
+        element={
+          <OwnerProtectedRoute
+            element={
+              <DefaultLayout>
+                <UpdateProperty />
+              </DefaultLayout>
+            }
+          />
         }
       />
       <Route

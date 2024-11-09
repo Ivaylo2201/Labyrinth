@@ -23,7 +23,7 @@ const Dropzone: React.FC<DropzoneProps> = ({ onDrop }) => {
   return (
     <div
       {...getRootProps()}
-      className="w-full h-full border-2 border-dashed border-gray-500 rounded-lg p-4 bg-white"
+      className="w-full h-24 border-2 border-dashed border-gray-500 rounded-lg p-4 bg-white"
     >
       <input {...getInputProps()} />
       {isDragActive ? (

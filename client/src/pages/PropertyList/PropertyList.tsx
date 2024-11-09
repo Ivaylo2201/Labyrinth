@@ -18,9 +18,12 @@ function PropertyList() {
   }
 
   return (
-    <div className="flex justify-center items-center border-2">
-      {/* <div className="flex flex-row p-2  flex-wrap gap-4"> */}
-      <div className="flex flex-col gap-4 w-full p-4 lg:flex-row lg:flex-wrap">
+    <div
+      className={`flex ${
+        properties.length === 1 ? "justify-start" : "justify-center"
+      } items-center border-2`}
+    >
+      <div className="flex flex-col gap-4 w-full lg:flex-row lg:flex-wrap p-3">
         {properties.map((p, i) => {
           return (
             <PropertyCard

@@ -15,6 +15,7 @@ interface AuthContextType {
     role_id: number
   ) => Promise<void>;
   getToken: () => string | null;
+  getUserEmail: () => Promise<any>;
 }
 export const getToken = () => {
   return localStorage.getItem("token");
@@ -141,10 +142,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, register, getToken }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, login, logout, register, getToken, getUserEmail }}
+    >
       {children}
     </AuthContext.Provider>
   );
+};
+
+const getUserEmail: () => Promise<string | null> = async () => {
+  axios.defaults.headers.common["Authorization"] = `Bearer ${getToken()}`;
+  const response = await Axios.get("http://127.0.0.1:8000/api/profile/", {
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });
+
+  return response.data;
 };
 
 export const useAuth = () => {
@@ -162,6 +176,6 @@ export const getProfile = async (token: string) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  
+
   return response.data;
 };
