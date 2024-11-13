@@ -66,7 +66,7 @@ export default function Login() {
       <div className="absolute inset-0 bg-black bg-opacity-20 backdrop-blur-sm"></div>
 
       <div className="absolute inset-0 flex items-center justify-center w-full">
-        <div className="bg-slate-700 w-full absolute top-0">
+        {/* <div className="bg-slate-700 w-full absolute top-0">
           <Link
             to="/"
             className="absolute z-20 top-0 left-0 m-1 bg-slate-100 px-3 py-1 rounded-full hover:bg-slate-600 hover:text-white duration-200"
@@ -79,7 +79,7 @@ export default function Login() {
           >
             Go to sign up
           </Link>
-        </div>
+        </div> */}
 
         <div className="w-2/3 lg:w-1/2 h-96 backdrop-blur-md bg-[#E0E0E0]  bg-opacity-60 rounded-lg flex justify-center text-center flex-row">
           <div className="hidden lg:block lg:w-1/2 bg-white flex flex-col items-center rounded-l-lg">
