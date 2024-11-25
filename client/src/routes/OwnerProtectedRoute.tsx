@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "../context/AuthContext";
 import useProperty from "../hooks/useProperty";
 import { Navigate, useParams } from "react-router-dom";
+import { ClipLoader } from "react-spinners";
 
 interface ProtectedRouteProps {
   element: JSX.Element;
@@ -42,7 +43,11 @@ export const OwnerProtectedRoute: React.FC<ProtectedRouteProps> = ({ element }) 
   }
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="w-full h-screen flex justify-center items-center">
+        <ClipLoader size={200} color="black" />
+      </div>
+    );
   }
 
   return !isOwner ? <Navigate to="/properties" /> : element;

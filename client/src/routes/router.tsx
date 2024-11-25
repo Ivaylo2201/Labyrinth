@@ -16,6 +16,9 @@ import { User } from "../types/User";
 import { ClipLoader } from "react-spinners";
 import UpdateProperty from "../pages/UpdateProperty/UpdateProperty";
 import { OwnerProtectedRoute } from "./OwnerProtectedRoute";
+import NotFound from "../pages/NotFound/NotFound";
+import Admin from "../pages/Admin/Admin";
+import Users from "../components/AdminUsers/AdminUsers";
 
 const RouterConfig: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -82,9 +85,9 @@ const RouterConfig: React.FC = () => {
         element={
           <OwnerProtectedRoute
             element={
-              <DefaultLayout>
+              <NoNavLayout>
                 <UpdateProperty />
-              </DefaultLayout>
+              </NoNavLayout>
             }
           />
         }
@@ -102,13 +105,13 @@ const RouterConfig: React.FC = () => {
         }
       />
       <Route
-        path="/forgot-password"
+        path="/admin"
         element={
           <ProtectedRoute
             element={
-              <NoNavLayout>
-                <ForgotPassword />
-              </NoNavLayout>
+              // <NoNavLayout>
+              <Admin />
+              // </NoNavLayout>
             }
           />
         }
@@ -125,6 +128,8 @@ const RouterConfig: React.FC = () => {
           />
         }
       />
+      <Route path="/forgot-password" element={<ProtectedRoute element={<ForgotPassword />} />} />
+      <Route path="*" element={<NotFound />} />
       <Route
         path="/profile"
         element={
@@ -137,7 +142,6 @@ const RouterConfig: React.FC = () => {
           />
         }
       />
-
       <Route
         path="/not-found"
         // Extract to separate page
@@ -150,6 +154,8 @@ const RouterConfig: React.FC = () => {
           </DefaultLayout>
         }
       />
+
+      <Route path="/admin/*" element={<Admin />} />
     </Routes>
   );
 };

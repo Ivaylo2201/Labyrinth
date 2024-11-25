@@ -33,18 +33,10 @@ interface PropertyContextType {
 }
 
 interface UpdatePropertyData {
-  type: string;
   status: string;
   price: number;
-  area: number;
-  bedrooms: number;
-  bathrooms: number;
-  city: string;
-  street: string;
-  country: string;
   description: string;
   files?: File[];
-  features: number[];
 }
 
 const PropertyContext = createContext<PropertyContextType | undefined>(undefined);
@@ -149,58 +141,35 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     propertyData: UpdatePropertyData,
     setFormValidMsg: (msg: string) => void
   ) => {
-    const formData = new FormData();
-    const fields = {
-      type: propertyData.type,
+    const propertyDataJson = {
       status: propertyData.status,
       price: propertyData.price,
-      area: propertyData.area,
-      bedrooms: propertyData.bedrooms,
-      bathrooms: propertyData.bathrooms,
-      city: propertyData.city,
-      street: propertyData.street,
-      country: propertyData.country,
       description: propertyData.description,
-      features: propertyData.features,
     };
-
-    const isValid = Object.values(fields).every(
-      (value) => value !== "" && value !== undefined && value !== null
-    );
-    if (!isValid || (propertyData.files && propertyData.files.length === 0)) {
-      setFormValidMsg("All fields are required and at least one image must be uploaded.");
-      return;
-    }
-
-    if (propertyData.files) {
-      propertyData.files.forEach((file) => formData.append("images[]", file));
-    }
-    console.log(propertyData);
-
-    Object.entries(fields).forEach(([key, value]) =>
-      formData.append(key, Array.isArray(value) ? JSON.stringify(value) : String(value))
-    );
 
     try {
       const token = getToken();
-      const response = await Axios.patch(`/properties/${id}`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axios.patch(
+        `http://127.0.0.1:8000/api/properties/${id}`,
+        propertyDataJson,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("Response:", response);
 
       if (response.status === 200) {
+        console.log("Property updated successfully!");
         setFormValidMsg("Property updated successfully!");
-      } else {
-        setFormValidMsg("Failed to update property.");
+        navigate("/properties");
       }
     } catch (error: any) {
-      handleError(error, setFormValidMsg);
+      console.error("Error updating property:", error);
     }
   };
 
-  // Handle errors in both create and update functions
   const handleError = (error: any, setFormValidMsg: (msg: string) => void) => {
     if (axios.isAxiosError(error) && error.response) {
       setFormValidMsg("Error: " + error.response.data.message);
@@ -259,5 +228,3 @@ export const deleteProperty = async (id: number) => {
 };
 
 export const usePropertyContext = () => useContext(PropertyContext);
-
-// export default PropertyProvider;
