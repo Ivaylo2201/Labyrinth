@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
@@ -18,6 +19,23 @@ class AdminController extends Controller
             UserResource::collection(User::all()),
             Response::HTTP_OK
         );
+    }
+
+    public function login(Request $request): JsonResponse
+    {
+        $user = User::where('email', $request->email)->first();
+
+        if ($user && Hash::check($request->password, $user->password)) {
+            return response()->json(
+                ['isAdmin' => $user->isAdmin(), 'token' => $user->createToken('auth_token')->plainTextToken],
+                Response::HTTP_OK
+            );
+        } else {
+            return response()->json(
+                ['error' => 'User not found'],
+                Response::HTTP_NOT_FOUND
+            );
+        }
     }
 
     public function properties(Request $request): JsonResponse

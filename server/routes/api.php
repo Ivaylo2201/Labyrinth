@@ -45,6 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 });
 
+Route::post('/admin/login', [AdminController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::middleware([AdminMiddleware::class])->group(function () {
         Route::prefix('/admin')->group(function () {

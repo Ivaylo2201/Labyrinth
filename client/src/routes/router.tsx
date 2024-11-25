@@ -107,13 +107,7 @@ const RouterConfig: React.FC = () => {
       <Route
         path="/admin"
         element={
-          <ProtectedRoute
-            element={
-              // <NoNavLayout>
-              <Admin />
-              // </NoNavLayout>
-            }
-          />
+            <Admin />
         }
       />
       <Route
@@ -154,8 +148,6 @@ const RouterConfig: React.FC = () => {
           </DefaultLayout>
         }
       />
-
-      <Route path="/admin/*" element={<Admin />} />
     </Routes>
   );
 };
