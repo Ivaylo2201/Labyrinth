@@ -16,13 +16,11 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check() && Auth::user()->role->name === 'admin') {
+
+        if ($request->user()->role->name === 'admin') {
             return $next($request);
         }
 
-        return response()->json([
-            'error' => 'Unauthorized access. Admins only.'], 
-            Response::HTTP_UNAUTHORIZED
-        );
+        return response()->json(['error' => 'Admins only.'], Response::HTTP_UNAUTHORIZED);
     }
 }

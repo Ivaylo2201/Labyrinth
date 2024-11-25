@@ -45,16 +45,18 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 });
 
-// admin routes
-Route::middleware([AdminMiddleware::class])->group(function () {
-    Route::prefix('/admin')->group(function () {
-        Route::prefix('/users')->group(function () {
-            Route::get('/', [AdminController::class, 'users']);
-            Route::delete('/{id}', [AdminController::class, 'destroy_user']);
-        });
-        Route::prefix('/properties')->group(function () {
-            Route::get('/', [AdminController::class, 'properties']);
-            Route::delete('/{id}', [AdminController::class, 'destroy_property']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware([AdminMiddleware::class])->group(function () {
+        Route::prefix('/admin')->group(function () {
+            Route::prefix('/users')->group(function () {
+                Route::get('/', [AdminController::class, 'users']);
+                Route::delete('/{id}', [AdminController::class, 'destroy_user']);
+            });
+            Route::prefix('/properties')->group(function () {
+                Route::get('/', [AdminController::class, 'properties']);
+                Route::delete('/{id}', [AdminController::class, 'destroy_property']);
+            });
         });
     });
 });
+
