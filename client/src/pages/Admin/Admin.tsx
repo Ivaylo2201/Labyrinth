@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import Modal from "react-modal";
 import bg2 from "../../assets/bg2.png";
-import { Link, Routes, Route, BrowserRouter, useNavigate } from "react-router-dom";
+import { Link, Routes, Route, useNavigate } from "react-router-dom";
 import AdminUsers from "../../components/AdminUsers/AdminUsers";
 import AdminProperties from "../../components/AdminProperties/AdminProperties";
-import AdminFeatures from "../../components/AdminFeatures/AdminFeatures";
 import { Axios } from "../../helpers/http";
 import { ClipLoader } from "react-spinners";
 
@@ -126,11 +125,11 @@ export default function Admin() {
                     Properties
                   </Link>
                 </li>
-                <li className="p-4 w-full hover:bg-gray-700 cursor-pointer relative group">
+                {/* <li className="p-4 w-full hover:bg-gray-700 cursor-pointer relative group">
                   <Link to="features" className="block w-full">
                     Features
                   </Link>
-                </li>
+                </li> */}
                 <li className="p-4 w-full hover:bg-gray-700 cursor-pointer group relative">
                   <Link to="/" className="block w-full">
                     Back to home
@@ -148,7 +147,6 @@ export default function Admin() {
               <Routes>
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="properties" element={<AdminProperties />} />
-                <Route path="features" element={<AdminFeatures />} />
                 <Route index element={<h1 className="text-2xl font-bold">Welcome, Admin!</h1>} />
               </Routes>
             </div>
