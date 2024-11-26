@@ -37,6 +37,7 @@ function PropertyList() {
               bedrooms={p.bedrooms}
               area={p.area}
               image={p.image}
+              user={p.user}
             />
           );
         })}
