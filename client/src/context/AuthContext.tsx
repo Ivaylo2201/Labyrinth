@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { Axios } from "../helpers/http";
+import { QueryClient, useQueryClient } from "react-query";
 
 interface AuthContextType {
   isAuthenticated: boolean;
