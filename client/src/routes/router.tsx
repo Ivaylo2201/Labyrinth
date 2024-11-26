@@ -104,12 +104,7 @@ const RouterConfig: React.FC = () => {
           />
         }
       />
-      <Route
-        path="/admin"
-        element={
-            <Admin />
-        }
-      />
+      <Route path="/admin/*" element={<Admin />} />
       <Route
         path="/forgot-password"
         element={
