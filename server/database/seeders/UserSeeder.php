@@ -16,6 +16,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         $user_role_id = Role::where('name', '=', 'user')->first()->id;
+        $admin_role_id = Role::where('name', '=', 'admin')->first()->id;
 
         $users = [
             [
@@ -24,7 +25,7 @@ class UserSeeder extends Seeder
                 'password' => 'ivanpetrov',
                 'phone_number' => '0892450786',
                 'location' => 'Varna',
-                'role_id' => $user_role_id,
+                'role_id' => $admin_role_id,
             ],
             [
                 'email' => 'petar.ivanov@test.com',
