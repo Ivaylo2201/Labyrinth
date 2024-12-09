@@ -162,19 +162,6 @@ export default function UpdateProperty() {
               className={inputStyle}
             />
 
-            <span className="flex flex-col">
-              <button
-                type="button"
-                className="bg-green-500 hover:bg-green-700 px-1 py-2 text-white duration-200"
-                onClick={openCloseModal}
-              >
-                Add Images
-              </button>
-              <label>
-                {files.length === 0 ? "No images selected" : `${files.length} images selected`}
-              </label>
-            </span>
-
             <textarea
               name="description"
               value={description}

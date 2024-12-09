@@ -92,16 +92,6 @@ const Navbar = () => {
                                 location='/admin'
                                 className='primary-button'
                             />
-                        <NavButton
-                            name='Contact'
-                            location='/'
-                            className='primary-button'
-                        />
-                        <NavButton
-                            name='Blogs'
-                            location='/'
-                            className='primary-button'
-                        />
                     </div>
                     <div className='text-white flex justify-center text-lg gap-3'>
                         {isAuthenticated ? (

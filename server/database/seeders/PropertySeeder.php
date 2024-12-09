@@ -16,6 +16,9 @@ class PropertySeeder extends Seeder
      */
     public function run(): void
     {
+        $first_user_id = User::first()->id;
+        $second_user_id = User::skip(1)->take(1)->first()->id;
+
         $properties = [
             [
                 'status' => 'rent',
@@ -25,7 +28,7 @@ class PropertySeeder extends Seeder
                 'bedrooms' => 2,
                 'area' => 100,
                 'description' => 'A nice house',
-                'user_id' => User::first()->id,
+                'user_id' => $first_user_id,
             ],
             [
                 'status' => 'buy',
@@ -35,38 +38,86 @@ class PropertySeeder extends Seeder
                 'bedrooms' => 3,
                 'area' => 120,
                 'description' => 'A nice apartment',
-                'user_id' => User::skip(1)->take(1)->first()->id,
-            ]
+                'user_id' => $second_user_id,
+            ],
+            [
+                'status' => 'rent',
+                'type' => 'apartment',
+                'price' => 750,
+                'bathrooms' => 1,
+                'bedrooms' => 1,
+                'area' => 80,
+                'description' => 'A cozy apartment in the city center',
+                'user_id' => $first_user_id,
+            ],
+            [
+                'status' => 'buy',
+                'type' => 'house',
+                'price' => 250000,
+                'bathrooms' => 3,
+                'bedrooms' => 4,
+                'area' => 200,
+                'description' => 'A spacious house with a garden',
+                'user_id' => $second_user_id,
+            ],
+            [
+                'status' => 'rent',
+                'type' => 'house',
+                'price' => 1200,
+                'bathrooms' => 2,
+                'bedrooms' => 3,
+                'area' => 150,
+                'description' => 'A modern house near the park',
+                'user_id' => $first_user_id,
+            ],
+            [
+                'status' => 'buy',
+                'type' => 'apartment',
+                'price' => 200000,
+                'bathrooms' => 2,
+                'bedrooms' => 3,
+                'area' => 110,
+                'description' => 'A luxurious apartment with great views',
+                'user_id' => $second_user_id,
+            ],
         ];
 
         $images = [
-            ['2i27hA8Onbx2WJ1BhxhqGnVr5LajoreHEAOGxKnY.jpg', 'D4w0xIFbGi1A9Xc2wsGuJo1Vvri69RVUvg8QefeO.jpg'],
-            ['zySVnSDJaqTEhTYIaGLxYFs2Hr4Vp9hNvdMgnCMX.jpg', '5ObX6wppdD4egUp24OCY2hvuMbPqNwoXbmejMUfh.jpg'],
+            ['house5.jpg', 'house6.jpg'],
+            ['apartment5.jpeg', 'apartment6.jpg'],
+            ['apartment1.jpg', 'apartment2.jpg'],
+            ['house1.jpg', 'house2.jpg'],
+            ['house3.jpg', 'house4.jpg'],
+            ['apartment3.jpg', 'apartment4.jpg'],
         ];
 
         $features = [
-            Feature::whereRaw('id % 2 = 0')->pluck('id'),
-            Feature::whereRaw('id % 2 != 0')->pluck('id'),
+            Feature::inRandomOrder()->take(3)->pluck('id'),
+            Feature::inRandomOrder()->take(4)->pluck('id'),
+            Feature::inRandomOrder()->take(2)->pluck('id'),
+            Feature::inRandomOrder()->take(5)->pluck('id'),
+            Feature::inRandomOrder()->take(3)->pluck('id'),
+            Feature::inRandomOrder()->take(4)->pluck('id'),
         ];
 
-        for ($i = 0; $i < 2; $i++) {
-            $instance = Property::create($properties[$i]);
+        foreach ($properties as $index => $property) {
+            $instance = Property::create($property);
 
             Address::create([
-                'country' => 'Bulgaria',
-                'city' => 'Sofia',
-                'street' => '123 Ivan Vazov str.',
+                'country' => fake()->country(),
+                'city' => fake()->city(),
+                'street' => fake()->streetAddress(),
                 'property_id' => $instance->id,
             ]);
 
-            foreach ($images[$i] as $image) {
+            foreach ($images[$index] as $image) {
                 Image::create([
                     'image' => 'images/' . $image,
                     'property_id' => $instance->id,
                 ]);
             }
 
-            $instance->features()->attach($features[$i]);
+            $instance->features()->attach($features[$index]);
         }
     }
 }
