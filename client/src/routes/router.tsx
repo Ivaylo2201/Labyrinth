@@ -19,6 +19,7 @@ import { OwnerProtectedRoute } from "./OwnerProtectedRoute";
 import NotFound from "../pages/NotFound/NotFound";
 import Admin from "../pages/Admin/Admin";
 import Users from "../components/AdminUsers/AdminUsers";
+import UserProperties from "../pages/UserProperties/UserProperties";
 
 const RouterConfig: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -67,6 +68,19 @@ const RouterConfig: React.FC = () => {
               <NoNavLayout>
                 <AddProperty />
               </NoNavLayout>
+            }
+          />
+        }
+      />
+
+<Route
+        path="/profile/properties"
+        element={
+          <UserProtectedRoute
+            element={
+              <DefaultLayout>
+                <UserProperties />
+              </DefaultLayout>
             }
           />
         }

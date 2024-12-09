@@ -81,11 +81,18 @@ const Navbar = () => {
                             className='primary-button'
                         />
                         {isAuthenticated && (
-                            <NavButton
-                                name='Add property'
-                                location='/add-property'
-                                className='primary-button'
-                            />
+                            <>
+                                <NavButton
+                                    name='Add property'
+                                    location='/add-property'
+                                    className='primary-button' 
+                                />
+                                <NavButton
+                                    name="Your properties" 
+                                    location='/profile/properties' 
+                                    className='primary-button'
+                                 />
+                            </>
                         )}
                         <NavButton
                                 name='Admin'
