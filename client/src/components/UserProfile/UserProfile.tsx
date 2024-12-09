@@ -1,10 +1,12 @@
-import { Mail, MapPin, PhoneCall, UserRound } from "lucide-react";
+import { Mail, MapPin, PhoneCall, TableProperties, UserRound } from "lucide-react";
 import { User } from "../../types/User";
 import bg from "../../assets/bg2.png";
 import { ClipLoader } from "react-spinners";
 import { useState } from "react";
 import { Axios } from "../../helpers/http";
 import axios, { AxiosError } from "axios";
+import { Link } from "react-router-dom";
+import Property from "../../pages/Property/Property";
 
 type UserProfileProps = {
   user: User;
@@ -89,6 +91,12 @@ function UserProfile({ user }: UserProfileProps) {
             <div className="flex gap-2 justify-start items-center">
               <MapPin size={23} />
               <p>{user.location == "Unknown" ? "N/A" : user.location}</p>
+            </div>
+            <div className="flex gap-2 justify-start items-center">
+              <TableProperties size={23} />
+              <Link to="/profile/properties" className="text-black">
+                My properties
+              </Link>
             </div>
           </span>
           <span className="flex flex-col gap-2 border-l-2 border-black pl-4">

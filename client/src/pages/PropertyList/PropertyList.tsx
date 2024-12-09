@@ -24,8 +24,10 @@ function PropertyList() {
       } items-center border-2`}
     >
       <div className="flex flex-col gap-4 w-full lg:flex-row lg:flex-wrap p-3">
-        {properties.map((p, i) => {
-          return (
+        {properties.length === 0 ? (
+          <p className="text-center text-xl">No properties available</p> // Message when no properties
+        ) : (
+          properties.map((p, i) => (
             <PropertyCard
               key={i}
               id={p.id}
@@ -39,8 +41,8 @@ function PropertyList() {
               image={p.image}
               user={p.user}
             />
-          );
-        })}
+          ))
+        )}
       </div>
     </div>
   );
